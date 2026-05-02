@@ -93,6 +93,28 @@ html, body {{
 [class*="st-"], [class*="st-"] * {{
     font-family: var(--font);
 }}
+/* Material Icons — Streamlit's expander chevrons / sidebar arrows /
+   action icons all use Material Icons font with the icon NAME as the
+   text node (e.g. "keyboard_arrow_right" → ▶). Our blanket DM Sans
+   rule above clobbers that, leaving the literal name visible as text.
+   Restore the icon font for every Material-Icons surface. */
+[data-testid="stIconMaterial"],
+[data-testid="stIconMaterial"] *,
+.material-icons, .material-icons-outlined,
+.material-symbols-outlined, .material-symbols-rounded,
+i.material-icons {{
+    font-family: 'Material Symbols Outlined', 'Material Icons',
+                 'Material Icons Outlined' !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    white-space: nowrap !important;
+    word-wrap: normal !important;
+    font-feature-settings: 'liga' !important;
+    -webkit-font-feature-settings: 'liga' !important;
+    -webkit-font-smoothing: antialiased !important;
+}}
 /* Explicit mono reclaim — any element or descendant of a mono-marked wrapper. */
 .rgf-kpi-value, .rgf-kpi-value *,
 .rgf-cycle-table td, .rgf-cycle-table td *,
@@ -462,9 +484,12 @@ body:has(.rgf-sidebar-collapsed) .main {{
     flex: 1; min-width: 0;
 }}
 .rgf-kpi-accent {{
-    background: var(--navy);
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
     border: none;
+    box-shadow: 0 4px 14px rgba(16,185,129,0.18);
 }}
+.rgf-kpi-accent .rgf-kpi-label {{ color: rgba(255,255,255,0.85) !important; }}
+.rgf-kpi-accent .rgf-kpi-unit {{ color: rgba(255,255,255,0.7) !important; }}
 .rgf-kpi-top {{
     display: flex; justify-content: space-between; align-items: center;
 }}
@@ -506,8 +531,9 @@ body:has(.rgf-sidebar-collapsed) .main {{
 }}
 .rgf-btn-sm:hover {{ color: var(--text); }}
 .rgf-btn-sm.active {{
-    background: var(--navy-light); color: #fff;
-    border: none; padding: 5px 11px;
+    background: var(--accent-tint); color: var(--accent-deep);
+    border: 1px solid var(--accent-border);
+    padding: 4px 11px;
     font-weight: 600;
 }}
 
@@ -915,6 +941,236 @@ input:focus, select:focus,
 /* Checkbox / toggle */
 .stCheckbox label span {{ font-size: 13px !important; }}
 
+/* ── Expander (details/summary) — light theme ──────────────────────────
+   Streamlit's <details> ships with a dark default that survives our
+   token flip; force it to white card + hairline border + soft shadow,
+   chevron in the muted slate. */
+[data-testid="stExpander"] details {{
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: 0 1px 3px rgba(15,23,51,0.04) !important;
+    overflow: hidden;
+}}
+[data-testid="stExpander"] details > summary,
+[data-testid="stExpander"] summary {{
+    background: var(--surface) !important;
+    color: var(--text) !important;
+    padding: 12px 16px !important;
+    font-family: var(--font) !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+    list-style: none;
+    transition: background 0.12s, color 0.12s;
+}}
+[data-testid="stExpander"] summary:hover {{
+    background: var(--bg-soft) !important;
+    color: var(--accent-deep) !important;
+}}
+[data-testid="stExpander"] details[open] > summary {{
+    border-bottom: 1px solid var(--border-soft) !important;
+    background: var(--bg-soft) !important;
+}}
+[data-testid="stExpander"] details > div:not([data-testid]) {{
+    background: var(--surface) !important;
+}}
+/* Inner block container — make sure the body doesn't carry old dark bg */
+[data-testid="stExpanderDetails"] {{
+    background: var(--surface) !important;
+    color: var(--text) !important;
+}}
+
+/* ── Date / time input — re-theme the BaseWeb input wrapper ────────── */
+.stDateInput [data-baseweb="input"],
+.stDateInput [data-baseweb="input"] > div,
+.stTimeInput [data-baseweb="input"],
+.stTimeInput [data-baseweb="input"] > div {{
+    background: var(--surface) !important;
+    border-color: var(--border) !important;
+    color: var(--text) !important;
+}}
+.stDateInput [data-baseweb="input"] input,
+.stTimeInput [data-baseweb="input"] input {{
+    background: var(--surface) !important;
+    color: var(--text) !important;
+}}
+
+/* ── Number input · stepper buttons ──────────────────────────────────── */
+.stNumberInput button,
+.stNumberInput [data-testid="stNumberInputStepUp"],
+.stNumberInput [data-testid="stNumberInputStepDown"] {{
+    background: var(--bg-soft) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text-2) !important;
+    transition: background 0.12s, color 0.12s;
+}}
+.stNumberInput button:hover,
+.stNumberInput [data-testid="stNumberInputStepUp"]:hover,
+.stNumberInput [data-testid="stNumberInputStepDown"]:hover {{
+    background: var(--accent-tint) !important;
+    color: var(--accent-deep) !important;
+    border-color: var(--accent-border) !important;
+}}
+
+/* ── Slider · re-theme thumb + track for light bg ────────────────────── */
+[data-baseweb="slider"] [role="slider"] {{
+    background: var(--accent) !important;
+    border: 2px solid var(--surface) !important;
+    box-shadow: 0 1px 4px rgba(15,23,51,0.18) !important;
+}}
+[data-baseweb="slider"] > div > div {{
+    background: var(--bg-soft) !important;
+}}
+
+/* ── Radio group · light surface ─────────────────────────────────────── */
+.stRadio [role="radiogroup"] {{ background: transparent !important; }}
+.stRadio [role="radio"] {{
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+}}
+.stRadio [role="radio"][aria-checked="true"] {{
+    background: var(--accent) !important;
+    border-color: var(--accent-dark) !important;
+}}
+
+/* ── Toggle (st.toggle) ──────────────────────────────────────────────── */
+.stCheckbox [data-baseweb="checkbox"] > div:first-child,
+.stToggle [data-baseweb="checkbox"] > div:first-child {{
+    background: var(--bg-soft) !important;
+    border: 1px solid var(--border) !important;
+}}
+.stCheckbox [data-baseweb="checkbox"][aria-checked="true"] > div:first-child,
+.stToggle [data-baseweb="checkbox"][aria-checked="true"] > div:first-child {{
+    background: var(--accent) !important;
+    border-color: var(--accent-dark) !important;
+}}
+
+/* ── File uploader (default — non-rgf_upload_shell) ──────────────────── */
+[data-testid="stFileUploaderDropzone"] {{
+    background: var(--surface) !important;
+    border: 2px dashed var(--border) !important;
+    color: var(--text-2) !important;
+}}
+[data-testid="stFileUploaderDropzone"]:hover {{
+    border-color: var(--accent) !important;
+    background: var(--accent-tint) !important;
+}}
+[data-testid="stFileUploaderFile"] {{
+    background: var(--bg-soft) !important;
+    border: 1px solid var(--border-soft) !important;
+    color: var(--text) !important;
+}}
+
+/* ── Text area (st.text_area) ────────────────────────────────────────── */
+.stTextArea textarea {{
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text) !important;
+    font-family: var(--font) !important;
+}}
+.stTextArea textarea:focus {{
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 2px rgba(16,185,129,0.1) !important;
+}}
+
+/* ── DataFrame (st.dataframe) — light surface ────────────────────────── */
+[data-testid="stDataFrame"] {{
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-md) !important;
+}}
+[data-testid="stDataFrame"] * {{
+    color: var(--text) !important;
+}}
+
+/* ── Tooltip (st.help, ?) ────────────────────────────────────────────── */
+[data-baseweb="tooltip"] {{
+    background: var(--text) !important;
+    color: var(--surface) !important;
+    border-radius: 6px !important;
+    font-size: 11px !important;
+}}
+
+/* ── Multiselect tag (token already styled — reinforce X close button) */
+.stMultiSelect [data-baseweb="tag"] [role="button"],
+.stMultiSelect [data-baseweb="tag"] svg {{
+    color: var(--accent-deep) !important;
+    fill: var(--accent-deep) !important;
+}}
+.stMultiSelect [data-baseweb="tag"]:hover {{
+    background: var(--accent) !important;
+    color: white !important;
+}}
+.stMultiSelect [data-baseweb="tag"]:hover svg,
+.stMultiSelect [data-baseweb="tag"]:hover [role="button"] {{
+    color: white !important; fill: white !important;
+}}
+
+/* ── Download button (st.download_button) — primary action style ─────── */
+.stDownloadButton button,
+[data-testid="stDownloadButton"] button {{
+    background: var(--accent) !important;
+    color: white !important;
+    border: 1px solid var(--accent-dark) !important;
+    border-radius: 7px !important;
+    font-weight: 500 !important;
+    transition: background 0.12s !important;
+}}
+.stDownloadButton button:hover,
+[data-testid="stDownloadButton"] button:hover {{
+    background: var(--accent-dark) !important;
+}}
+
+/* ── Generic st.button — secondary on light bg ───────────────────────── */
+.stButton button[kind="secondary"],
+.stButton > button:not([kind]) {{
+    background: var(--surface) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+}}
+.stButton button[kind="secondary"]:hover,
+.stButton > button:not([kind]):hover {{
+    background: var(--bg-soft) !important;
+    border-color: var(--text-3) !important;
+}}
+.stButton button[kind="primary"] {{
+    background: var(--accent) !important;
+    color: white !important;
+    border: 1px solid var(--accent-dark) !important;
+}}
+.stButton button[kind="primary"]:hover {{
+    background: var(--accent-dark) !important;
+}}
+
+/* ── Spinner (st.spinner) ────────────────────────────────────────────── */
+.stSpinner > div > div {{
+    border-top-color: var(--accent) !important;
+}}
+
+/* ── Alert / info / warning / error / success boxes ──────────────────── */
+[data-testid="stAlertContentInfo"],
+[data-baseweb="notification"] {{
+    background: var(--accent-tint) !important;
+    border: 1px solid var(--accent-border) !important;
+    color: var(--accent-deep) !important;
+}}
+[data-testid="stAlertContentSuccess"] {{
+    background: {DELTA_UP_BG} !important;
+    border: 1px solid {DELTA_UP_TEXT} !important;
+    color: {DELTA_UP_TEXT} !important;
+}}
+[data-testid="stAlertContentWarning"] {{
+    background: {WARN_BG} !important;
+    border: 1px solid {WARN_BORDER} !important;
+    color: {WARN_TEXT} !important;
+}}
+[data-testid="stAlertContentError"] {{
+    background: {DELTA_DOWN_BG} !important;
+    border: 1px solid {DELTA_DOWN_TEXT} !important;
+    color: {DELTA_DOWN_TEXT} !important;
+}}
+
 /* ==============================================================
    FILE UPLOADER
    ============================================================== */
@@ -993,9 +1249,10 @@ div.stTabs [data-baseweb="tab-panel"] {{ padding-top: 16px !important; }}
    CODE BLOCK (SQL preview in Chart Builder)
    ============================================================== */
 .rgf-sql-block {{
-    background: var(--navy); border-radius: var(--radius-md);
+    background: #0E1733; border-radius: var(--radius-md);
     padding: 16px 20px;
-    font-family: var(--mono); font-size: 12px; color: #a3e635;
+    border: 1px solid var(--border);
+    font-family: var(--mono); font-size: 12px; color: #6EE7B7;
     line-height: 1.7; white-space: pre-wrap; position: relative;
 }}
 .rgf-sql-label {{
@@ -1413,9 +1670,14 @@ div.stTabs [data-baseweb="tab-panel"] {{ padding-top: 16px !important; }}
     color: var(--text) !important;
 }}
 
-/* ── SQL preview block — navy bg, lime mono code (design L180-189) ──── */
+/* ── SQL preview block — code editor look on light bg ──────────────────
+   Was navy bg + lime text on dark theme; on light theme we keep the
+   high-contrast code-editor feel by going to a deep-navy block (kept
+   as a deliberate "code surface" island) but lighten the green so it
+   still pops on the dark code bg. */
 .rgf-cb-sql {{
-    background: var(--navy); border-radius: 10px;
+    background: #0E1733; border-radius: 10px;
+    border: 1px solid var(--border);
     padding: 16px 20px; margin-top: 12px;
     position: relative;
 }}
