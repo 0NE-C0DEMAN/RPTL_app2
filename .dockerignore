@@ -1,0 +1,69 @@
+# Keep the image lean — only ship what the runtime needs.
+
+# VCS + IDE
+.git
+.gitignore
+.gitattributes
+.vscode
+.idea
+.claude
+.claude/**
+*.swp
+
+# Python caches & build artifacts
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info
+.pytest_cache
+.mypy_cache
+.ruff_cache
+build
+dist
+
+# Virtual envs — rebuild from requirements.txt inside the image
+.venv
+venv
+env
+
+# Per-user / per-session runtime data (written by the app; rebuilt at runtime)
+data/uploads/**
+data/parquet/**
+data/cache/**
+!data/.gitkeep
+
+# Secrets — never ship credentials into an image
+.streamlit/secrets.toml
+.env
+.env.local
+*.pem
+*.key
+
+# Reference material — notebooks, client reference, design JSX — dev-only,
+# not needed at runtime. The Load Demo dataset stays under demo/.
+reference/**
+20241118_145534_sourceGraph.txt
+
+# Working-copy debug artifacts
+debug_*.png
+*_reference.png
+compare_plots.png
+expected_plots.png
+cycle_analysis_expected.png
+RPLT*.zip
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Docker itself
+Dockerfile
+.dockerignore
+
+# Deploy + docs (not needed at runtime)
+cloudbuild.yaml
+DEPLOYMENT.md
+README.md

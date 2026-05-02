@@ -1,0 +1,72 @@
+# Data (uploaded files, cached parquet, etc.) — keep an empty marker
+# so the directory exists in fresh clones, but every actual ingested
+# file stays out of git. Pattern is `data/*` (ignore contents) plus a
+# negation for `.gitkeep`; if you write `data/` here git won't even
+# descend into the dir and the negation is unreachable.
+data/*
+!data/.gitkeep
+
+# Original 24 MB acquisition dump — too large for git. A decimated
+# 15k-row sample (_sample.txt) is tracked instead.
+20241118_145534_sourceGraph.txt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.pytest_cache/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Local env
+.env
+.env.local
+
+# AI assistant local settings (keep launch.json, drop per-machine permissions)
+.claude/settings.local.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.parquet
+*.duckdb
+*.duckdb.wal
+*.zip
+
+# Design mock screenshots — ship only the JSX source, skip the 1 MB
+# screenshot dump (design mock working-copy artifacts)
+reference/design/uploads/
+
+# Working-copy reference screenshots (not part of the app)
+chart_builder_reference.png
+compare_plots.png
+cycle_analysis_expected.png
+expected_plots.png
+upm_reference.png
+
+# Ad-hoc debug plots produced during data-validation scripts
+debug_*.png
+
+# Editor backup files (some IDEs drop these on save)
+*.py.tmp.*
+*.tmp.*
+
+# AI coding agent per-project config (launch profiles, settings, etc.)
+.claude/

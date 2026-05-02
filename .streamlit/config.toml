@@ -1,0 +1,36 @@
+# RGF Dashboard — Streamlit theme + server config (dark mode).
+# Theme colors aligned with lib/tokens.py so the Streamlit canvas chrome
+# and the injected CSS agree. (st.dataframe's canvas grid ignores CSS —
+# dataframeBorderColor / dataframeHeaderBackgroundColor must be here.)
+
+[theme]
+base = "dark"
+primaryColor = "#10b981"
+backgroundColor = "#1d2737"
+secondaryBackgroundColor = "#0a0f18"
+textColor = "#e6edf3"
+borderColor = "#2a3750"
+linkColor = "#10b981"
+codeBackgroundColor = "#0a0f18"
+showWidgetBorder = false
+dataframeBorderColor = "#2a3750"
+dataframeHeaderBackgroundColor = "#141c2b"
+font = "sans serif"
+
+[server]
+maxUploadSize = 2000
+# enableCORS + enableXsrfProtection default to true. Behind a reverse
+# proxy (Cloud Run, Cloudflare, nginx), Streamlit's origin-based checks
+# reject legitimate WebSocket handshakes — the Dockerfile overrides
+# both to false via CLI flags. Keep them on for local dev.
+enableCORS = true
+enableXsrfProtection = true
+runOnSave = false
+headless = true
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"
+showErrorDetails = true

@@ -1,0 +1,19 @@
+# RPLT Dashboard — runtime Python dependencies.
+#
+# Pinned to reasonable lower bounds. Tested on Python 3.11 (see runtime.txt
+# and the Dockerfile's base image). The Docker image installs these into
+# the system interpreter; a local dev install should use a venv.
+
+# Web framework
+streamlit>=1.40
+
+# Analytics / data pipeline
+duckdb>=1.1
+pyarrow>=18
+pandas>=2.2
+numpy>=2
+scipy>=1.14
+openpyxl>=3.1
+
+# Chart downsampling — keeps impact peaks visible on long recordings
+lttb>=0.3

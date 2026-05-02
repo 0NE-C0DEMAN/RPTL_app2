@@ -1,0 +1,2796 @@
+/* =============================================================================
+   RGF Geotechnical Analysis — CSS template (design mock redesign).
+
+   Tokens (CSS variables) are defined in :root and sourced from lib/tokens.py.
+   Template is read by lib/theme.py::_load_css() which runs str.format_map.
+   Every literal brace is doubled; every token reference is a bare name in
+   single braces.
+   ============================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
+:root {{
+    --bg: {BG};
+    --surface: {SURFACE};
+    --bg-soft: {BG_SOFT};
+    --bg-row-alt: {BG_ROW_ALT};
+    --border: {BORDER};
+    --border-soft: {BORDER_SOFT};
+
+    --navy: {NAVY};
+    --navy-light: {NAVY_LIGHT};
+    --text: {TEXT};
+    --text-2: {TEXT_2};
+    --text-3: {TEXT_3};
+    --nav-text: {NAV_TEXT};
+    --nav-icon: {NAV_ICON};
+    --nav-muted: {NAV_MUTED};
+    --grid: {GRID};
+
+    --accent: {ACCENT};
+    --accent-dark: {ACCENT_DARK};
+    --accent-light: {ACCENT_LIGHT};
+    --accent-soft: {ACCENT_SOFT};
+    --accent-deep: {ACCENT_DEEP};
+    --accent-border: {ACCENT_BORDER};
+    --accent-tint: {ACCENT_TINT};
+
+    --slate: {SLATE};
+    --slate-muted: {SLATE_MUTED};
+    --hover-soft: {HOVER_SOFT};
+
+    --delta-up-bg: {DELTA_UP_BG};
+    --delta-up-text: {DELTA_UP_TEXT};
+    --delta-down-bg: {DELTA_DOWN_BG};
+    --delta-down-text: {DELTA_DOWN_TEXT};
+    --warn-bg: {WARN_BG};
+    --warn-border: {WARN_BORDER};
+    --warn-text: {WARN_TEXT};
+    --warn-icon: {WARN_ICON};
+
+    --google-green: {GOOGLE_GREEN};
+    --google-blue: {GOOGLE_BLUE};
+
+    --radius-sm: {RADIUS_SM}px;
+    --radius-md: {RADIUS_MD}px;
+    --radius-lg: {RADIUS_LG}px;
+
+    --font: 'DM Sans', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'DM Mono', monospace;
+}}
+
+/* ── Reset ────────────────────────────────────────────────────────────────── */
+*, *::before, *::after {{ box-sizing: border-box; }}
+#MainMenu, footer, header {{ visibility: hidden !important; height: 0 !important; }}
+.stDeployButton, [data-testid="stSidebar"], [data-testid="stHeader"],
+[data-testid="stToolbar"] {{ display: none !important; }}
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+html {{
+    font-size: 14px;  /* compresses rem-based sizes to 87.5% — matches design density */
+}}
+html, body {{
+    font-family: var(--font);
+    background: var(--bg) !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: var(--text);
+}}
+.stApp {{
+    font-family: var(--font);
+    background: var(--bg) !important;
+    color: var(--text);
+    display: block !important;
+}}
+
+/* Force DM Sans across every element Streamlit/baseweb renders. Mono usage
+   opts back in per-selector (.rgf-kpi-value, .rgf-cycle-table td, etc.). */
+.stApp, .stApp *,
+[data-testid="stAppViewContainer"],
+[data-testid="stAppViewContainer"] *,
+[data-baseweb], [data-baseweb] *,
+[class*="st-"], [class*="st-"] * {{
+    font-family: var(--font);
+}}
+/* Explicit mono reclaim — any element or descendant of a mono-marked wrapper. */
+.rgf-kpi-value, .rgf-kpi-value *,
+.rgf-cycle-table td, .rgf-cycle-table td *,
+.rgf-cycle-pill, .rgf-cycle-unit,
+.rgf-table-meta, .rgf-logo-mark,
+.rgf-sb-foot-meta,
+code, pre, kbd, samp,
+.stCodeBlock, .stCodeBlock * {{
+    font-family: var(--mono) !important;
+}}
+[data-testid="stAppViewContainer"] {{
+    display: block !important;
+    justify-content: flex-start !important;
+}}
+.main .block-container,
+[data-testid="stMainBlockContainer"],
+[data-testid="block-container"] {{
+    padding: 20px 24px !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    width: 100% !important;
+}}
+.stApp > header, .main > div:first-child,
+[data-testid="stAppViewBlockContainer"], .block-container {{
+    padding-top: 0 !important;
+}}
+
+/* Vertical gap between major sections — matches design's 16–20 px spacing */
+[data-testid="stVerticalBlock"] {{ gap: 16px !important; }}
+[data-testid="stVerticalBlock"] > [data-testid="stElementContainer"] {{
+    margin: 0 !important;
+}}
+/* Tighter gap inside panel containers */
+[class*="st-key-rgf_panel_"] [data-testid="stVerticalBlock"] {{ gap: 10px !important; }}
+[class*="st-key-rgf_upload_shell"] [data-testid="stVerticalBlock"] {{ gap: 0 !important; }}
+
+/* ── Scrollbars ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {{ width: 6px; height: 6px; }}
+::-webkit-scrollbar-track {{ background: transparent; }}
+::-webkit-scrollbar-thumb {{ background: var(--border); border-radius: 3px; }}
+::-webkit-scrollbar-thumb:hover {{ background: var(--text-3); }}
+
+/* ── Headings ─────────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5 {{ font-family: var(--font); color: var(--text); margin: 0; letter-spacing: -0.01em; }}
+h1.rgf-pghdr-title {{
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    color: var(--text) !important;
+    letter-spacing: -0.02em !important;
+    margin: 0 !important; padding: 0 !important;
+    line-height: 1.2 !important;
+}}
+
+/* ==============================================================
+   HIDDEN CLICK-TROUGH TRIGGERS
+   Real st.button widgets whose only job is to receive programmatic
+   .click() from visible HTML controls and trigger a Streamlit rerun
+   over the websocket (no page reload). Parked off-screen but still
+   clickable by JS — display:none would make them non-functional.
+   ============================================================== */
+[class*="st-key-__nav_"],
+[class*="st-key-__src_"],
+[class*="st-key-__activate_"],
+[class*="st-key-__clear_"],
+[class*="st-key-__load_"],
+[class*="st-key-__cycle_"],
+[class*="st-key-__cb_"],
+[class*="st-key-__rb_"],
+[class*="st-key-__rd_"],
+[class*="st-key-__settings_"],
+[class*="st-key-__sidebar_toggle"],
+[class*="st-key-__dash_"],
+[class*="st-key-__std_"],
+[class*="st-key-__tw_"] {{
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}}
+
+/* ==============================================================
+   PANEL WRAPPERS — st.container(key="rgf_panel_xxx") gets card chrome
+   ============================================================== */
+[class*="st-key-rgf_panel_"] {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 18px !important;
+    gap: 8px !important;
+}}
+[class*="st-key-rgf_panel_"] .rgf-panel-hdr {{
+    padding: 0 0 8px !important;
+}}
+
+/* ── Data Setup panel — role label + stats chip ─────────────────────── */
+.rgf-setup-role {{
+    display: flex; align-items: center;
+    height: 38px; /* match selectbox height so everything sits on a baseline */
+    font-size: 10px; font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: var(--font);
+}}
+.rgf-setup-stats {{
+    display: flex; align-items: center; gap: 12px;
+    height: 38px; padding: 0 12px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 11px; color: var(--text-2);
+    font-family: var(--mono);
+    white-space: nowrap; overflow: hidden;
+}}
+.rgf-setup-stats b {{ color: var(--text); font-weight: 600; }}
+.rgf-setup-stats span {{ display: inline-flex; gap: 4px; }}
+.rgf-setup-stats-empty {{
+    color: var(--text-3);
+    justify-content: center;
+    font-family: var(--font);
+}}
+
+/* Tighten the rows inside the Data Setup panel so all three role rows
+   pack neatly without Streamlit's default 1rem vertical gutter. */
+[class*="st-key-rgf_panel_setup"] [data-testid="stHorizontalBlock"] {{
+    margin-bottom: 6px;
+}}
+[class*="st-key-rgf_panel_setup"] [data-testid="stHorizontalBlock"]:last-of-type {{
+    margin-bottom: 0;
+}}
+
+/* ==============================================================
+   SIDEBAR NAVIGATION  (custom HTML — not Streamlit's native sidebar)
+   ============================================================== */
+.rgf-sidebar {{
+    position: fixed; top: 0; left: 0;
+    width: {SIDEBAR_W}px; height: 100vh;
+    background: var(--navy);
+    display: flex; flex-direction: column;
+    z-index: 1000;
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}}
+.rgf-sidebar-collapsed {{ width: {SIDEBAR_W_COLLAPSED}px; }}
+
+/* Push main content right of fixed sidebar — explicit left offset + full width */
+[data-testid="stMain"], .main {{
+    margin-left: {SIDEBAR_W}px !important;
+    width: calc(100% - {SIDEBAR_W}px) !important;
+    max-width: calc(100% - {SIDEBAR_W}px) !important;
+    transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}}
+/* When the sidebar is collapsed, shift the main content in via :has()
+   so the narrow 64-px rail shows without the main column overlapping. */
+body:has(.rgf-sidebar-collapsed) [data-testid="stMain"],
+body:has(.rgf-sidebar-collapsed) .main {{
+    margin-left: {SIDEBAR_W_COLLAPSED}px !important;
+    width: calc(100% - {SIDEBAR_W_COLLAPSED}px) !important;
+    max-width: calc(100% - {SIDEBAR_W_COLLAPSED}px) !important;
+}}
+
+/* ── Collapsed-state chrome ─────────────────────────────────────────────
+   Hide text-bearing children, centre icons, reveal a hover-tooltip with
+   the nav item's data-label. Matches ui.jsx::Sidebar L95-182. */
+.rgf-sidebar-collapsed .rgf-logo {{
+    padding: 20px 15px; justify-content: center;
+}}
+.rgf-sidebar-collapsed .rgf-logo-text {{
+    opacity: 0 !important;
+    width: 0 !important;
+    pointer-events: none;
+}}
+.rgf-sidebar-collapsed .rgf-nav-list {{
+    padding: 14px 8px;
+}}
+.rgf-sidebar-collapsed .rgf-nav-item {{
+    padding: 11px 0;
+    justify-content: center;
+}}
+.rgf-sidebar-collapsed .rgf-nav-label {{
+    opacity: 0 !important;
+    width: 0 !important;
+    margin: 0 !important;
+}}
+.rgf-sidebar-collapsed .rgf-sidebar-footer {{
+    padding: 14px 8px;
+    text-align: center;
+}}
+.rgf-sidebar-collapsed .rgf-sb-foot-lbl,
+.rgf-sidebar-collapsed .rgf-sb-foot-name,
+.rgf-sidebar-collapsed .rgf-sb-foot-meta {{
+    display: none;
+}}
+.rgf-sidebar-collapsed .rgf-sidebar-footer::before {{
+    /* Cycle-count badge in collapsed footer — green pill matching
+       ui.jsx::Sidebar L173-175 ("03" mock). Shows "—" when no active
+       dataset; the server-side footer HTML stays full-text and gets
+       CSS-hidden, so this ::before is the collapsed substitute. */
+    content: "—";
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 7px;
+    background: rgba(16,185,129,0.15);
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    color: var(--accent);
+}}
+
+/* Hover tooltip on collapsed nav items — picks up the button's
+   data-label attribute, floats to the right of the rail. */
+.rgf-sidebar-collapsed .rgf-nav-item {{
+    position: relative;
+}}
+.rgf-sidebar-collapsed .rgf-nav-item::after {{
+    content: attr(data-label);
+    position: absolute;
+    left: 100%; top: 50%; transform: translateY(-50%);
+    margin-left: 14px;
+    padding: 6px 12px; border-radius: 7px;
+    background: var(--text); color: var(--surface);
+    font-size: 12px; font-weight: 500; font-family: var(--font);
+    white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(15,23,51,0.18);
+    border: 1px solid rgba(15,23,51,0.10);
+    opacity: 0; pointer-events: none; z-index: 100;
+    transition: opacity 0.15s;
+}}
+.rgf-sidebar-collapsed .rgf-nav-item:hover::after {{
+    opacity: 1;
+}}
+
+/* Logo */
+.rgf-logo {{
+    display: flex; align-items: center; gap: 12px;
+    padding: 20px; min-height: 68px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+}}
+.rgf-logo-mark {{
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-weight: 700; font-size: 13px; color: white;
+    box-shadow: 0 2px 8px rgba(16,185,129,0.22);
+    flex-shrink: 0;
+}}
+.rgf-logo-text {{ overflow: hidden; white-space: nowrap; }}
+.rgf-logo-title {{ font-weight: 700; font-size: 16px; color: var(--text); letter-spacing: -0.02em; }}
+.rgf-logo-sub   {{ font-size: 10px; color: var(--nav-muted); letter-spacing: 0.06em; text-transform: uppercase; }}
+
+/* Nav list */
+.rgf-nav-list {{
+    flex: 1;
+    padding: 14px 8px;
+    display: flex; flex-direction: column; gap: 2px;
+    overflow-y: auto; overflow-x: hidden;
+}}
+.rgf-nav-item {{
+    position: relative;
+    display: flex; align-items: center; gap: 11px;
+    padding: 11px 14px;
+    border-radius: 8px;
+    font-size: 13px; font-weight: 400;
+    font-family: var(--font);
+    color: var(--nav-text);
+    text-decoration: none !important;
+    transition: all 0.15s;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    -webkit-appearance: none;
+    appearance: none;
+}}
+.rgf-nav-item:hover {{
+    background: transparent;
+    color: var(--text);
+}}
+.rgf-nav-item.active {{
+    background: transparent;
+    color: var(--accent);
+    font-weight: 600;
+}}
+.rgf-nav-item.active::before {{
+    content: ''; position: absolute;
+    left: 0; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 20px; border-radius: 0 3px 3px 0;
+    background: var(--accent);
+}}
+.rgf-nav-icon {{ flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; }}
+.rgf-nav-label {{ overflow: hidden; white-space: nowrap; }}
+
+/* Active-test footer */
+.rgf-sidebar-footer {{
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-soft);
+}}
+.rgf-sb-foot-lbl {{
+    font-size: 10px; color: var(--nav-icon); text-transform: uppercase;
+    letter-spacing: 0.06em; margin-bottom: 6px;
+}}
+.rgf-sb-foot-name {{ font-size: 13px; color: var(--text); font-weight: 600; }}
+.rgf-sb-foot-meta {{ font-size: 11px; color: var(--nav-icon); margin-top: 3px; font-family: var(--mono); }}
+
+/* ==============================================================
+   PAGE HEADER
+   ============================================================== */
+.rgf-pghdr {{
+    /* 1:1 with ui.jsx::PageHeader — marginBottom 20, gap 12. */
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 20px;
+    flex-wrap: wrap; gap: 12px;
+}}
+.rgf-pghdr-title {{
+    font-size: 22px; font-weight: 700;
+    color: var(--text); letter-spacing: -0.02em;
+    margin: 0;
+}}
+.rgf-pghdr-sub {{
+    font-size: 13px; color: var(--text-3);
+    margin: 4px 0 0; font-weight: 400;
+}}
+.rgf-pghdr-actions {{
+    display: flex; gap: 8px; align-items: center;
+}}
+
+/* ==============================================================
+   CHART PANEL (generic white card)
+   ============================================================== */
+.rgf-panel {{
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 0;
+}}
+.rgf-panel-hdr {{
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 18px 0;
+    gap: 8px;
+}}
+.rgf-panel-title {{
+    font-size: 13px; font-weight: 600; color: var(--text);
+}}
+.rgf-panel-actions {{
+    display: flex; gap: 4px; align-items: center;
+}}
+.rgf-panel-body {{
+    padding: 8px 12px 12px;
+}}
+
+/* ==============================================================
+   KPI CARD  (plain / accent variants)
+   ============================================================== */
+.rgf-kpi {{
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+    display: flex; flex-direction: column; gap: 6px;
+    flex: 1; min-width: 0;
+}}
+.rgf-kpi-accent {{
+    background: var(--navy);
+    border: none;
+}}
+.rgf-kpi-top {{
+    display: flex; justify-content: space-between; align-items: center;
+}}
+.rgf-kpi-label {{
+    font-size: 11px; font-weight: 600;
+    color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.05em;
+}}
+.rgf-kpi-accent .rgf-kpi-label {{ color: var(--accent); }}
+.rgf-kpi-row {{
+    display: flex; align-items: baseline; gap: 6px;
+}}
+.rgf-kpi-value {{
+    font-family: var(--mono); font-size: 28px; font-weight: 600;
+    color: var(--text); letter-spacing: -0.02em;
+}}
+.rgf-kpi-accent .rgf-kpi-value {{ color: white; }}
+.rgf-kpi-unit {{
+    font-size: 13px; color: var(--text-3); font-weight: 500;
+}}
+.rgf-kpi-accent .rgf-kpi-unit {{ color: var(--slate); }}
+.rgf-kpi-spark {{ margin-top: 2px; }}
+
+/* ==============================================================
+   BUTTONS
+   ============================================================== */
+/* Small pill button — 1:1 with ui.jsx::SmallBtn.
+   Idle: 1px border, text-3 fg, transparent bg, weight 400.
+   Active: no border, navy bg, white fg, weight 600. Padding bumps by
+   1px to compensate for the dropped 1px border so the row doesn't
+   shift vertically when toggled. */
+.rgf-btn-sm {{
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; font-size: 11px; font-weight: 400;
+    background: transparent; color: var(--text-3);
+    border: 1px solid var(--border); border-radius: 6px;
+    cursor: pointer; font-family: var(--font);
+    line-height: 1.4; transition: all 0.15s;
+}}
+.rgf-btn-sm:hover {{ color: var(--text); }}
+.rgf-btn-sm.active {{
+    background: var(--navy-light); color: #fff;
+    border: none; padding: 5px 11px;
+    font-weight: 600;
+}}
+
+/* Square icon button */
+.rgf-btn-icon {{
+    width: 28px; height: 28px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--text-3); cursor: pointer; transition: all 0.15s;
+}}
+.rgf-btn-icon:hover {{ color: var(--text); border-color: var(--text-3); }}
+
+/* Primary gradient button */
+.rgf-btn-primary {{
+    padding: 9px 20px; font-size: 13px; font-weight: 600; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color: white; border: none; cursor: pointer; font-family: var(--font);
+    box-shadow: 0 1px 4px rgba(16,185,129,0.3);
+    transition: all 0.15s;
+}}
+.rgf-btn-primary:hover {{ box-shadow: 0 2px 8px rgba(16,185,129,0.4); transform: translateY(-1px); }}
+
+/* Streamlit native st.button — restyle to match */
+.stButton > button {{
+    font-family: var(--font) !important; font-size: 13px !important;
+    font-weight: 500 !important; padding: 8px 16px !important;
+    background: var(--surface) !important; border: 1px solid var(--border) !important;
+    color: var(--text) !important; border-radius: 8px !important;
+    transition: all 0.15s !important;
+    box-shadow: none !important;
+}}
+.stButton > button:hover {{
+    background: var(--bg-soft) !important;
+    border-color: var(--text-3) !important;
+}}
+.stButton > button[kind="primary"] {{
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark)) !important;
+    color: white !important; border: none !important;
+    box-shadow: 0 1px 4px rgba(16,185,129,0.3) !important;
+}}
+.stButton > button[kind="primary"]:hover {{
+    box-shadow: 0 2px 8px rgba(16,185,129,0.4) !important;
+    transform: translateY(-1px);
+}}
+[data-testid="stDownloadButton"] > button {{
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark)) !important;
+    color: white !important; border: none !important; font-weight: 600 !important;
+    padding: 8px 16px !important; font-size: 13px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 4px rgba(16,185,129,0.3) !important;
+    font-family: var(--font) !important;
+}}
+
+/* ==============================================================
+   BADGE
+   ============================================================== */
+.rgf-badge {{
+    display: inline-block;
+    padding: 3px 8px; font-size: 10px; font-weight: 600;
+    border-radius: 5px; letter-spacing: 0.03em;
+}}
+.rgf-badge-green  {{ background: rgba(16,185,129,0.15);  color: var(--accent); }}
+.rgf-badge-blue   {{ background: rgba(59,130,246,0.15);  color: #3b82f6; }}
+.rgf-badge-amber  {{ background: rgba(245,158,11,0.15);  color: #f59e0b; }}
+.rgf-badge-violet {{ background: rgba(139,92,246,0.15);  color: #8b5cf6; }}
+.rgf-badge-cyan   {{ background: rgba(6,182,212,0.15);   color: #06b6d4; }}
+.rgf-badge-gray   {{ background: rgba(100,116,139,0.15); color: var(--slate); }}
+
+/* ==============================================================
+   PROCESSING TOOLBAR
+   ============================================================== */
+.rgf-toolbar {{
+    display: flex; gap: 20px; align-items: flex-end;
+    padding: 12px 18px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+    flex-wrap: wrap;
+}}
+.rgf-toolbar-title {{
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 700; color: var(--text); letter-spacing: -0.01em;
+    margin-right: 4px;
+}}
+.rgf-toolbar-field {{
+    display: flex; flex-direction: column; gap: 3px;
+}}
+.rgf-toolbar-label {{
+    font-size: 10px; font-weight: 600; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.04em;
+}}
+
+/* ==============================================================
+   EMPTY STATE
+   ============================================================== */
+.rgf-empty {{
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 60px 20px;
+    gap: 12px;
+}}
+.rgf-empty-icon-wrap {{
+    width: 56px; height: 56px; border-radius: 16px; background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+}}
+.rgf-empty-title {{ font-size: 15px; font-weight: 600; color: var(--text); }}
+.rgf-empty-msg   {{ font-size: 13px; color: var(--text-3); max-width: 340px; text-align: center; }}
+
+/* Legacy empty state (component.py) — alias to new classes */
+.rgf-empty-state {{
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 60px 20px; gap: 12px;
+}}
+.rgf-empty-state .rgf-empty-icon {{
+    width: 56px; height: 56px; border-radius: 16px;
+    background: var(--bg-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: var(--text-3); opacity: 1; margin-bottom: 0;
+}}
+/* SVG variant — stroke pulls the tertiary text tone so the icon reads
+   as supporting visual rather than primary content. Emeraald accent
+   on hover to tie it to the brand. */
+.rgf-empty-state .rgf-empty-icon-svg {{
+    color: var(--text-3);
+    transition: color 0.2s, background 0.2s;
+}}
+.rgf-empty-state .rgf-empty-icon-svg svg {{
+    width: 28px; height: 28px;
+    stroke-width: 1.6;
+}}
+.rgf-empty-state .rgf-empty-title {{
+    font-size: 15px; font-weight: 600; color: var(--text);
+}}
+.rgf-empty-state .rgf-empty-message {{
+    font-size: 13px; color: var(--text-3); max-width: 340px; text-align: center;
+    line-height: 1.5;
+}}
+
+/* Table meta caption */
+.rgf-table-meta {{ font-size: 12px; color: var(--text-3); margin-bottom: 4px; font-family: var(--mono); }}
+
+/* Standard Analysis composite picker — the row of pills that select
+   which two signals overlay on the dual-axis time history. Rendered
+   ABOVE the chart panel (not inside actions_html) so click events
+   reach the parent-document JS bridge. */
+.rgf-std-composite-toolbar {{
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    border-bottom: none;
+    margin-bottom: -1px; /* tuck under the chart card so they merge visually */
+}}
+
+/* Chart panels are now rendered entirely inside an iframe via
+   st.components.v1.html — all chrome (border, radius, header, canvas,
+   tooltip) lives in the self-contained HTML doc emitted by
+   views/dashboard.py::_inject_canvas_panel. No host-side CSS needed. */
+
+/* ==============================================================
+   UPM PARAMETERS PANEL — matches views.jsx::UPMView lines 329-344.
+   ChartPanel chrome (white card on light, surface on dark) + 2×2
+   grid of tinted-bg cells with uppercase label + mono value + unit.
+   ============================================================== */
+.rgf-upm-panel {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+}}
+.rgf-upm-hdr {{
+    padding: 14px 18px 0;
+}}
+.rgf-upm-title {{
+    font-size: 13px; font-weight: 600; color: var(--text);
+}}
+.rgf-upm-grid {{
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px; padding: 8px 12px 12px;
+}}
+.rgf-upm-cell {{
+    padding: 12px 14px;
+    background: var(--bg-soft);
+    border-radius: 8px;
+}}
+.rgf-upm-cell-label {{
+    font-size: 10px; font-weight: 600; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}}
+.rgf-upm-cell-value {{
+    font-family: var(--mono); font-size: 18px; font-weight: 600;
+    color: var(--text);
+}}
+.rgf-upm-cell-unit {{
+    font-size: 12px; color: var(--text-3); margin-left: 4px;
+}}
+
+/* ==============================================================
+   CYCLE SUMMARY TABLE — matches view-dashboard.jsx + ui.jsx ChartPanel 1:1
+   ============================================================== */
+/* ChartPanel container: bg surface, radius 10, 1px border, padding 0 */
+.rgf-cycle-panel {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    margin-top: 18px;
+}}
+/* ChartPanel header: 14px 18px 0, space-between, gap 8 */
+.rgf-cycle-panel > .rgf-panel-hdr {{
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 18px 0; gap: 8px;
+    margin: 0; border: none;
+}}
+.rgf-cycle-panel > .rgf-panel-hdr .rgf-panel-title {{
+    font-size: 13px; font-weight: 600; color: var(--text);
+    font-family: var(--font);
+}}
+.rgf-cycle-panel > .rgf-panel-hdr .rgf-panel-actions {{
+    display: flex; gap: 4px;
+}}
+/* ChartPanel body: 8px 12px 12px */
+.rgf-cycle-table-wrap {{
+    padding: 8px 12px 12px;
+    width: 100%; overflow-x: auto;
+}}
+.rgf-cycle-table {{
+    width: 100%; border-collapse: collapse; font-size: 13px;
+    font-family: var(--font);
+}}
+/* thead tr: 2px bottom border */
+.rgf-cycle-table thead tr {{ border-bottom: 2px solid var(--border); }}
+/* th: 10px 14px, 11px / weight 600 / uppercase / 0.04em */
+.rgf-cycle-table th {{
+    padding: 10px 14px; text-align: left;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    font-family: var(--font);
+    background: transparent;
+}}
+/* tbody tr: 1px soft divider */
+.rgf-cycle-table tbody tr {{ border-bottom: 1px solid var(--border-soft); }}
+.rgf-cycle-table tbody tr:last-child {{ border-bottom: none; }}
+/* td: 12px 14px, mono, weight 500 */
+.rgf-cycle-table td {{
+    padding: 12px 14px;
+    font-family: var(--mono) !important;
+    font-weight: 500; color: var(--text); font-size: 13px;
+    vertical-align: middle;
+}}
+/* Cycle-id pill: mono / weight 600 / bg-soft / 3px 8px / radius 5 / 12px */
+.rgf-cycle-pill {{
+    display: inline-block; padding: 3px 8px; border-radius: 5px;
+    background: var(--bg-soft); color: var(--text);
+    font-family: var(--mono) !important;
+    font-weight: 600; font-size: 12px;
+}}
+/* Unit suffix: text-3, 11px, mono, single space prefix (no margin) */
+.rgf-cycle-unit {{
+    color: var(--text-3); font-size: 11px;
+    font-family: var(--mono) !important;
+    font-weight: 400;
+}}
+
+/* ==============================================================
+   st.metric — match Dashboard KPI card styling
+   ============================================================== */
+[data-testid="stMetric"] {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 18px 20px !important;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}}
+[data-testid="stMetric"]:hover {{
+    border-color: rgba(16,185,129,0.32);
+    box-shadow: 0 1px 3px rgba(15,23,51,0.06), 0 6px 14px rgba(15,23,51,0.08);
+}}
+[data-testid="stMetric"] label,
+[data-testid="stMetricLabel"] p,
+[data-testid="stMetricLabel"] div {{
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: var(--text-3) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin: 0 !important;
+}}
+[data-testid="stMetricValue"],
+[data-testid="stMetricValue"] div {{
+    font-family: var(--mono) !important;
+    font-size: 28px !important;
+    font-weight: 600 !important;
+    color: var(--text) !important;
+    letter-spacing: -0.02em !important;
+    margin-top: 4px !important;
+}}
+[data-testid="stMetricDelta"] {{
+    font-family: var(--mono) !important; font-size: 11px !important;
+}}
+
+/* ==============================================================
+   FORM INPUTS — selects, numbers, text, dates
+   ============================================================== */
+[data-testid="stWidgetLabel"] p {{
+    font-size: 11px !important; font-weight: 600 !important;
+    color: var(--text-3) !important;
+    text-transform: uppercase !important; letter-spacing: 0.04em !important;
+    line-height: 1 !important; margin-bottom: 4px !important;
+}}
+.stSelectbox [data-baseweb="select"] > div,
+.stMultiSelect [data-baseweb="select"] > div {{
+    min-height: 34px !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 7px !important;
+    background: var(--surface) !important;
+    font-size: 12px !important;
+    font-family: var(--mono) !important;
+}}
+.stTextInput input, .stNumberInput input {{
+    height: 34px !important; padding: 0 10px !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 7px !important;
+    background: var(--surface) !important; color: var(--text) !important;
+    font-size: 13px !important; font-family: var(--font) !important;
+}}
+.stNumberInput input {{ font-family: var(--mono) !important; font-size: 12px !important; }}
+.stDateInput input {{
+    height: 34px !important; padding: 0 10px !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 7px !important;
+    background: var(--surface) !important;
+    font-family: var(--font) !important; font-size: 13px !important;
+}}
+input:focus, select:focus,
+.stSelectbox [data-baseweb="select"]:focus-within > div,
+.stMultiSelect [data-baseweb="select"]:focus-within > div {{
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 2px rgba(16,185,129,0.1) !important;
+    outline: none !important;
+}}
+
+/* Dropdown menus — re-themed for the light surface palette.
+   BaseWeb's popover stacks 3-4 nested divs each with their own
+   background (legacy dark Streamlit defaults). We force every
+   layer to the white surface, with hairline border + soft shadow,
+   and tint hover/selected rows in our accent. */
+[data-baseweb="popover"],
+[data-baseweb="popover"] > div,
+[data-baseweb="popover"] [role="listbox"],
+[data-baseweb="popover"] [role="presentation"],
+[data-baseweb="menu"] {{
+    background: var(--surface) !important;
+    color: var(--text) !important;
+}}
+[data-baseweb="popover"] [role="listbox"],
+[data-baseweb="menu"] {{
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: 0 8px 24px rgba(15,23,51,0.10),
+                0 1px 3px rgba(15,23,51,0.06) !important;
+    padding: 4px !important;
+}}
+[data-baseweb="popover"] [role="option"] {{
+    font-size: 13px !important;
+    font-family: var(--font) !important;
+    color: var(--text) !important;
+    background: transparent !important;
+    border-radius: var(--radius-sm) !important;
+    padding: 8px 10px !important;
+    transition: background 0.1s !important;
+}}
+[data-baseweb="popover"] [role="option"]:hover {{
+    background: var(--bg-soft) !important;
+    color: var(--text) !important;
+}}
+[data-baseweb="popover"] [aria-selected="true"],
+[data-baseweb="popover"] [role="option"][aria-selected="true"]:hover {{
+    background: var(--accent-tint) !important;
+    color: var(--accent-deep) !important;
+    font-weight: 600 !important;
+}}
+/* Date-picker calendar popover (st.date_input) — same treatment */
+[data-baseweb="calendar"],
+[data-baseweb="calendar"] * {{
+    background: var(--surface) !important;
+    color: var(--text) !important;
+}}
+[data-baseweb="calendar"] [aria-selected="true"] {{
+    background: var(--accent) !important; color: white !important;
+}}
+
+/* Multiselect tags */
+.stMultiSelect [data-baseweb="tag"] {{
+    background: var(--accent-light) !important; color: var(--accent-deep) !important;
+    border: 1px solid var(--accent-border) !important;
+    border-radius: var(--radius-sm) !important; font-size: 12px !important;
+    height: 24px !important;
+}}
+
+/* Checkbox / toggle */
+.stCheckbox label span {{ font-size: 13px !important; }}
+
+/* ==============================================================
+   FILE UPLOADER
+   ============================================================== */
+[data-testid="stFileUploader"] section {{
+    border: 2px dashed var(--border); border-radius: 12px;
+    background: var(--surface); padding: 32px 20px;
+    text-align: center; transition: all 0.2s;
+}}
+[data-testid="stFileUploader"] section:hover {{
+    border-color: var(--accent);
+    background: var(--accent-tint);
+}}
+
+/* ==============================================================
+   ST.TABS — repurposed for sub-tabs inside views (Settings, Import)
+   ============================================================== */
+div.stTabs [data-baseweb="tab-list"] {{
+    border-bottom: 1px solid var(--border) !important;
+    gap: 6px !important; padding: 0 !important;
+    background: transparent !important;
+}}
+div.stTabs [data-baseweb="tab-list"] button {{
+    padding: 10px 18px !important; font-size: 13px !important;
+    font-family: var(--font) !important; font-weight: 400 !important;
+    color: var(--text-3) !important;
+    background: none !important; border: none !important;
+    border-bottom: 2px solid transparent !important;
+    letter-spacing: 0 !important; text-transform: none !important;
+    border-radius: 0 !important; transition: all 0.15s !important;
+    margin-bottom: -1px !important;
+}}
+div.stTabs [data-baseweb="tab-list"] button:hover {{ color: var(--text) !important; }}
+div.stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {{
+    color: var(--text) !important; font-weight: 600 !important;
+    border-bottom-color: var(--accent) !important;
+}}
+div.stTabs [data-baseweb="tab-highlight"] {{ display: none !important; }}
+div.stTabs [data-baseweb="tab-border"] {{ display: none !important; }}
+div.stTabs [data-baseweb="tab-panel"] {{ padding-top: 16px !important; }}
+
+/* ==============================================================
+   st.dataframe / data tables — Glide grid
+   ============================================================== */
+.stDataFrame, [data-testid="stDataFrame"] {{
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-md) !important;
+    overflow: hidden !important;
+}}
+
+/* ==============================================================
+   ALERTS
+   ============================================================== */
+.stAlert {{ border-radius: var(--radius-md) !important; font-size: 13px !important; }}
+
+/* ==============================================================
+   PLOTLY CHART FRAMES (re-used for desk-table rendering too)
+   ============================================================== */
+[data-testid="stPlotlyChart"] {{
+    overflow: hidden !important;
+    border-radius: var(--radius-md) !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease !important;
+    scrollbar-width: none;
+}}
+[data-testid="stPlotlyChart"]::-webkit-scrollbar {{ width: 0 !important; height: 0 !important; display: none !important; }}
+[data-testid="stPlotlyChart"]:hover {{
+    border-color: rgba(16,185,129,0.35) !important;
+    box-shadow:
+        0 2px 6px rgba(15,23,51,0.06),
+        0 10px 28px rgba(15,23,51,0.08),
+        0 0 24px rgba(16,185,129,0.05) !important;
+}}
+
+/* ==============================================================
+   CODE BLOCK (SQL preview in Chart Builder)
+   ============================================================== */
+.rgf-sql-block {{
+    background: var(--navy); border-radius: var(--radius-md);
+    padding: 16px 20px;
+    font-family: var(--mono); font-size: 12px; color: #a3e635;
+    line-height: 1.7; white-space: pre-wrap; position: relative;
+}}
+.rgf-sql-label {{
+    position: absolute; top: 10px; right: 14px;
+    font-size: 10px; color: var(--slate);
+    text-transform: uppercase; letter-spacing: 0.06em;
+}}
+
+/* ==============================================================
+   IMPORT DATA — file rows, source cards, column-mapping grid
+   ============================================================== */
+.rgf-file-row {{
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 6px;
+    border-bottom: 1px solid var(--border-soft);
+    background: transparent;
+    border-left: none; border-right: none; border-top: none;
+    font-family: var(--font); color: inherit;
+    width: 100%; cursor: pointer;
+    -webkit-appearance: none; appearance: none;
+    transition: background 0.1s;
+}}
+.rgf-file-row:hover {{ background: var(--bg-soft); }}
+.rgf-file-row:last-child {{ border-bottom: none; }}
+.rgf-file-ico {{
+    width: 38px; height: 38px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}}
+.rgf-file-ico-upload {{ background: var(--bg); color: var(--slate); }}
+.rgf-file-ico-gsheet {{ background: #e8f5e9;                   color: var(--google-green); }}
+.rgf-file-ico-gcp    {{ background: #e3f2fd;                   color: var(--google-blue); }}
+.rgf-file-name {{ font-size: 13px; font-weight: 600; color: var(--text); }}
+.rgf-file-meta {{ font-size: 11px; color: var(--text-3); margin-top: 2px; }}
+.rgf-file-src-chip {{
+    display: inline-block; margin-left: 6px;
+    padding: 1px 5px; border-radius: 3px; background: var(--bg);
+    font-size: 10px; font-weight: 500; color: var(--slate);
+}}
+
+/* Cloud-provider setup card (Google Sheets / GCP) */
+.rgf-cloud-card {{
+    background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border);
+    padding: 28px;
+}}
+.rgf-cloud-head {{ display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }}
+.rgf-cloud-ico {{
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+}}
+.rgf-cloud-ico-g    {{ background: #e8f5e9; }}
+.rgf-cloud-ico-blue {{ background: #e3f2fd; }}
+.rgf-cloud-title {{ font-size: 15px; font-weight: 600; color: var(--text); }}
+.rgf-cloud-sub   {{ font-size: 12px; color: var(--text-3); }}
+
+/* ==============================================================
+   IMPORT DATA — source tabs (pill-style, distinct from sub-tabs)
+   ============================================================== */
+.rgf-src-tabs {{
+    display: flex; gap: 6px; margin-bottom: 16px;
+}}
+.rgf-src-tab {{
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 10px 18px;
+    font-size: 13px; font-weight: 400; font-family: var(--font);
+    color: var(--text-3);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    text-decoration: none !important;
+    transition: all 0.15s;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}}
+.rgf-src-tab:hover {{ color: var(--text); }}
+.rgf-src-tab.active {{
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+    font-weight: 600;
+}}
+.rgf-src-tab-icon {{
+    color: var(--text-3);
+    display: inline-flex;
+}}
+.rgf-src-tab.active .rgf-src-tab-icon,
+.rgf-src-tab.active .rgf-src-tab-icon svg {{
+    color: var(--accent) !important;
+    stroke: var(--accent) !important;
+}}
+
+/* Upload zone hint row */
+.rgf-upload-hint {{
+    margin-top: 12px; font-size: 12px; color: var(--text-3);
+    display: flex; justify-content: space-between; align-items: center;
+}}
+
+/* ── Custom drop-zone overlay ─────────────────────────────────────────────
+   Streamlit's file_uploader lives inside st.container(key="rgf_upload_shell").
+   We hide its default internals and render our visual on top with pointer-
+   events: none so the click/drag still reach the real dropzone. */
+.st-key-rgf_upload_shell {{
+    position: relative;
+}}
+/* Collapse the stElementContainer wrapping the overlay — it has its own
+   position:relative by default, which would capture the overlay's absolute
+   positioning. Make it static + zero-height so the overlay anchors to
+   .st-key-rgf_upload_shell instead. */
+.st-key-rgf_upload_shell [data-testid="stElementContainer"]:has(.rgf-drop-overlay) {{
+    position: static !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}}
+.st-key-rgf_upload_shell [data-testid="stFileUploaderDropzone"] {{
+    min-height: 180px !important;
+    padding: 48px 20px !important;
+    border: 2px dashed var(--border) !important;
+    border-radius: 12px !important;
+    background: var(--surface) !important;
+    cursor: pointer;
+    transition: all 0.2s;
+}}
+.st-key-rgf_upload_shell [data-testid="stFileUploaderDropzone"]:hover {{
+    border-color: var(--accent) !important;
+    background: var(--accent-tint) !important;
+}}
+/* Hide Streamlit's default button + hint text inside the dropzone —
+   keep the INPUT visible (drag-drop + click still work). */
+.st-key-rgf_upload_shell [data-testid="stFileUploaderDropzone"] > *:not(input) {{
+    visibility: hidden !important;
+}}
+/* Overlay (positioned absolutely inside the container so it sits on top
+   of the dropzone) — pointer-events:none lets clicks pass through. */
+.rgf-drop-overlay {{
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    min-height: 180px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 10px;
+    pointer-events: none;
+    text-align: center;
+}}
+.rgf-drop-icon {{
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: var(--accent-tint);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 4px;
+    color: var(--accent);
+}}
+.rgf-drop-title {{
+    font-size: 15px; font-weight: 600; color: var(--text);
+}}
+.rgf-drop-sub {{
+    font-size: 13px; color: var(--text-3);
+}}
+
+/* Tips row (Google Sheets / GCP card) */
+.rgf-cloud-tips {{
+    display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;
+}}
+.rgf-cloud-tip {{
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; color: var(--text-3);
+}}
+.rgf-cloud-tip-dot {{ color: var(--text-3); }}
+
+/* GCP mock file browser */
+.rgf-gcp-browser {{
+    border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+    margin-top: 4px;
+}}
+.rgf-gcp-browser-hdr {{
+    padding: 8px 12px; background: var(--bg-soft);
+    border-bottom: 1px solid var(--border);
+    font-size: 11px; font-weight: 600; color: var(--text-3);
+    font-family: var(--mono);
+}}
+.rgf-gcp-browser-row {{
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border-soft);
+    font-size: 13px; transition: background 0.1s;
+}}
+.rgf-gcp-browser-row:last-child {{ border-bottom: none; }}
+.rgf-gcp-browser-row:hover {{ background: var(--bg-soft); }}
+.rgf-gcp-browser-icon {{ color: var(--slate); display: inline-flex; flex-shrink: 0; }}
+.rgf-gcp-browser-icon-folder {{ color: #f59e0b; }}
+.rgf-gcp-browser-name {{ flex: 1; font-family: var(--mono); font-size: 12px; color: var(--text); }}
+.rgf-gcp-browser-size {{ font-size: 11px; color: var(--text-3); font-family: var(--mono); }}
+
+/* Files-empty state */
+.rgf-files-empty {{
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 8px; padding: 36px 20px;
+    text-align: center;
+}}
+.rgf-files-empty-icon {{
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 52px; height: 52px; border-radius: 12px;
+    background: var(--bg-soft);
+    color: var(--text-3);
+    margin-bottom: 8px;
+}}
+.rgf-files-empty-icon svg {{ width: 24px; height: 24px; stroke-width: 1.6; }}
+.rgf-files-empty-title {{ font-size: 14px; font-weight: 600; color: var(--text); }}
+.rgf-files-empty-msg {{ font-size: 12px; color: var(--text-3); margin-bottom: 10px; }}
+.rgf-files-empty .rgf-btn-primary {{
+    padding: 8px 20px;
+}}
+
+/* Data preview mini-table */
+.rgf-preview-tbl {{
+    width: 100%; border-collapse: collapse;
+    font-family: var(--mono); font-size: 12px;
+}}
+.rgf-preview-tbl th {{
+    padding: 8px 12px; text-align: left;
+    font-size: 10px; font-weight: 600; color: var(--text-3);
+    border-bottom: 2px solid var(--border);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    font-family: var(--font);
+}}
+.rgf-preview-tbl td {{
+    padding: 7px 12px; border-bottom: 1px solid var(--border-soft);
+    color: var(--text);
+}}
+.rgf-preview-tbl td.rgf-preview-idx {{ color: var(--text-3); }}
+
+/* ==============================================================
+   SETTINGS — warning banner
+   ============================================================== */
+.rgf-warn-banner {{
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px;
+    background: var(--warn-bg); border: 1px solid var(--warn-border);
+    border-radius: var(--radius-md);
+    font-size: 13px; color: var(--warn-text);
+}}
+
+/* ==============================================================
+   REPORT — "included" section row
+   ============================================================== */
+.rgf-report-section {{
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 8px; border-radius: 7px; transition: background 0.1s;
+}}
+.rgf-report-section-on  {{ background: var(--accent-tint); }}
+.rgf-report-preview {{
+    background: var(--surface); border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    padding: 40px; min-height: 500px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}}
+.rgf-report-cover {{
+    text-align: center;
+    padding-bottom: 24px;
+    margin-bottom: 36px;
+    border-bottom: 2px solid var(--border);
+}}
+.rgf-report-eyebrow {{
+    font-size: 10px; font-weight: 600; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;
+}}
+.rgf-report-title {{
+    font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -0.02em;
+}}
+.rgf-report-meta {{ font-size: 13px; color: var(--text-3); margin-top: 8px; }}
+
+/* ==============================================================
+   TOOLTIP (hover) — used in Sidebar when collapsed
+   ============================================================== */
+.rgf-tip {{
+    position: absolute; left: 100%; top: 50%;
+    transform: translateY(-50%);
+    margin-left: 10px; padding: 6px 12px; border-radius: 7px;
+    background: var(--text); color: var(--surface); font-size: 12px; font-weight: 500;
+    white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(15,23,51,0.18);
+    border: 1px solid rgba(15,23,51,0.10);
+    pointer-events: none; z-index: 10000;
+    opacity: 0; transition: opacity 0.15s;
+}}
+.rgf-sidebar-collapsed .rgf-nav-item:hover .rgf-tip {{ opacity: 1; }}
+
+/* ==============================================================
+   CHART BUILDER — sidebar panels, chart-type grid, Y-axis rows,
+   themed selects/slider, SQL preview block.
+   Matches components/view-chartbuilder.jsx 1:1.
+   ============================================================== */
+/* Sidebar ChartPanel chrome */
+[class*="st-key-cb_panel_"] {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px !important;
+    margin-bottom: 12px;
+}}
+.rgf-cb-panel-hdr {{
+    font-size: 13px; font-weight: 600; color: var(--text);
+    margin-bottom: 10px;
+}}
+.rgf-cb-panel-title {{ font-size: 13px; font-weight: 600; }}
+.rgf-cb-label {{
+    font-size: 10px; font-weight: 600; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin: 6px 0 4px 0;
+    font-family: var(--font);
+    display: block;
+}}
+.rgf-cb-hint {{
+    font-size: 10px; color: var(--text-3); margin-top: 4px;
+}}
+
+/* ── Chart Type grid — 3×2 SmallBtns (matches view-chartbuilder.jsx L65) ── */
+.rgf-cb-type-grid {{
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+    margin-bottom: 2px;
+}}
+.rgf-cb-type-btn {{
+    font-size: 11px !important; padding: 6px 0 !important;
+    text-align: center; width: 100%;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 0 !important;
+}}
+
+/* ── Y Axis multi-select — HTML checkbox rows ───────────────────────── */
+.rgf-cb-y-list {{
+    display: flex; flex-direction: column; gap: 3px;
+    max-height: 180px; overflow-y: auto;
+    padding-right: 2px;
+}}
+.rgf-cb-y-row {{
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px; border-radius: 6px;
+    cursor: pointer; font-size: 12px;
+    background: transparent;
+    border: 1px solid transparent;
+    transition: all 0.12s;
+}}
+.rgf-cb-y-row:hover {{
+    background: var(--bg-soft);
+}}
+.rgf-cb-y-row.active {{
+    background: rgba(16,185,129,0.12);
+    border-color: rgba(167,243,208,0.35);
+}}
+.rgf-cb-y-check {{
+    width: 14px; height: 14px; border-radius: 3px;
+    border: 1.5px solid var(--border);
+    background: transparent; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.12s;
+}}
+.rgf-cb-y-check.on {{
+    background: var(--accent); border-color: var(--accent);
+}}
+.rgf-cb-y-row .rgf-cb-y-name {{
+    color: var(--text-3); font-weight: 400;
+}}
+.rgf-cb-y-row.active .rgf-cb-y-name {{
+    color: var(--text); font-weight: 500;
+}}
+
+/* ── Themed native selectboxes inside CB sidebar panels ─────────────── */
+[class*="st-key-cb_panel_"] [data-testid="stSelectbox"] {{
+    margin-bottom: 2px;
+}}
+[class*="st-key-cb_panel_"] [data-testid="stSelectbox"] [data-baseweb="select"] > div {{
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 7px !important;
+    min-height: 34px !important;
+    font-size: 12px !important;
+    transition: border-color 0.12s;
+}}
+[class*="st-key-cb_panel_"] [data-testid="stSelectbox"] [data-baseweb="select"]:hover > div {{
+    border-color: var(--text-3) !important;
+}}
+[class*="st-key-cb_panel_"] [data-testid="stSelectbox"] [data-baseweb="select"] input,
+[class*="st-key-cb_panel_"] [data-testid="stSelectbox"] [data-baseweb="select"] > div > div {{
+    font-size: 12px !important; color: var(--text) !important;
+    padding: 0 4px !important;
+}}
+
+/* ── Number input (filter value) — mono font ────────────────────────── */
+[class*="st-key-cb_panel_filter"] [data-testid="stNumberInput"] input {{
+    font-family: var(--mono) !important;
+    font-size: 12px !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 7px !important;
+}}
+
+/* ── Max Rows slider — accent green track + thumb ───────────────────── */
+[class*="st-key-cb_panel_sample"] [data-testid="stSlider"] {{
+    padding-top: 4px;
+}}
+[class*="st-key-cb_panel_sample"] [data-testid="stSlider"] [role="slider"] {{
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.15) !important;
+}}
+[class*="st-key-cb_panel_sample"] [data-testid="stSlider"] [data-baseweb="slider"] > div:nth-child(1) > div {{
+    background: var(--accent) !important;
+}}
+[class*="st-key-cb_panel_sample"] [data-testid="stSlider"] .StyledThumbValue {{
+    font-family: var(--mono) !important;
+    font-size: 11px !important;
+    color: var(--text) !important;
+}}
+
+/* ── SQL preview block — navy bg, lime mono code (design L180-189) ──── */
+.rgf-cb-sql {{
+    background: var(--navy); border-radius: 10px;
+    padding: 16px 20px; margin-top: 12px;
+    position: relative;
+}}
+.rgf-cb-sql-tag {{
+    position: absolute; top: 10px; right: 14px;
+    font-size: 10px; color: #64748b;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    font-family: var(--font);
+}}
+.rgf-cb-sql-body {{
+    font-family: var(--mono) !important;
+    font-size: 12px; color: #a3e635;
+    line-height: 1.7; white-space: pre-wrap; margin: 0;
+    background: transparent;
+}}
+
+/* ==============================================================
+   PRINT — scope to the Chart Builder's main chart only.
+   When body carries .rgf-printing, hide every element except the
+   current chart panel iframe + let it fill the page.
+   ============================================================== */
+@media print {{
+    body.rgf-printing,
+    body.rgf-printing * {{ visibility: hidden !important; }}
+    body.rgf-printing [class*="st-key-rgf_chart_panel_cb_"],
+    body.rgf-printing [class*="st-key-rgf_chart_panel_cb_"] * {{
+        visibility: visible !important;
+    }}
+    body.rgf-printing [class*="st-key-rgf_chart_panel_cb_"] {{
+        position: absolute !important;
+        left: 0 !important; top: 0 !important;
+        width: 100% !important;
+    }}
+    body.rgf-printing .rgf-sidebar,
+    body.rgf-printing [data-testid="stSidebar"] {{ display: none !important; }}
+}}
+
+/* ==============================================================
+   REPORT BUILDER — section picker, settings fields, preview card,
+   KPI grid, tables. Matches components/views.jsx::ReportView 1:1.
+   ============================================================== */
+/* Sidebar panel chrome — same as Chart Builder */
+[class*="st-key-rb_panel_"] {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px !important;
+    margin-bottom: 12px;
+}}
+.rgf-rb-badge-count {{
+    margin-left: auto;
+    font-size: 10px; color: var(--text-3);
+    font-family: var(--font); font-weight: 500;
+}}
+
+/* ── Section row — checkbox + title + type + grip handle ────────────── */
+.rgf-rb-section-list {{
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 4px 0;
+}}
+.rgf-rb-section {{
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 8px; border-radius: 7px;
+    cursor: pointer; transition: background 0.12s;
+    background: transparent;
+}}
+.rgf-rb-section:hover {{ background: var(--bg-soft); }}
+.rgf-rb-section.on {{ background: rgba(16,185,129,0.10); }}
+.rgf-rb-check {{
+    width: 20px; height: 20px; border-radius: 5px;
+    border: 2px solid var(--border); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.15s;
+}}
+.rgf-rb-check.on {{
+    border-color: var(--accent); background: var(--accent);
+}}
+.rgf-rb-section-meta {{
+    flex: 1; min-width: 0;
+}}
+.rgf-rb-section-title {{
+    font-size: 13px; font-weight: 500; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}}
+.rgf-rb-section-type {{
+    font-size: 11px; color: var(--text-3); margin-top: 1px;
+    text-transform: capitalize;
+}}
+.rgf-rb-grip {{
+    flex-shrink: 0; color: #cbd5e1;
+    opacity: 0.5;
+}}
+.rgf-rb-section:hover .rgf-rb-grip {{ opacity: 1; }}
+
+/* ── Settings text inputs — styled native st.text_input ─────────────
+   The real bordered element in baseweb is <div data-baseweb="input">
+   (the input itself lives inside it, transparent). Targeting the wrapper
+   gives us the 6-px radius + 1-px border the design specs; styling the
+   child input handles font/padding/color. */
+[class*="st-key-rb_panel_settings"] [data-testid="stTextInput"] {{
+    margin-bottom: 6px !important;
+}}
+[class*="st-key-rb_panel_settings"] [data-testid="stTextInput"] > div {{
+    padding: 0 !important;
+    margin: 0 !important;
+}}
+[class*="st-key-rb_panel_settings"] [data-baseweb="input"],
+[class*="st-key-rb_panel_settings"] [data-baseweb="base-input"] {{
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 6px !important;
+    overflow: hidden;
+    transition: border-color 0.12s;
+}}
+[class*="st-key-rb_panel_settings"] [data-baseweb="input"]:focus-within {{
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 2px rgba(16,185,129,0.15) !important;
+}}
+[class*="st-key-rb_panel_settings"] [data-testid="stTextInput"] input {{
+    font-family: var(--font) !important;
+    font-size: 13px !important;
+    padding: 7px 10px !important;
+    color: var(--text) !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    line-height: 1.4 !important;
+}}
+[class*="st-key-rb_panel_settings"] [data-testid="stTextInput"] input:focus {{
+    outline: none !important; box-shadow: none !important;
+}}
+
+/* ── Gradient "Generate PDF" button in page header ───────────────── */
+.rgf-btn-gradient {{
+    padding: 8px 18px;
+    font-size: 12px; font-weight: 600;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff; border: none; border-radius: 7px;
+    cursor: pointer; font-family: var(--font);
+    box-shadow: 0 1px 4px rgba(16,185,129,0.35);
+    transition: all 0.15s;
+}}
+.rgf-btn-gradient:hover {{
+    box-shadow: 0 2px 10px rgba(16,185,129,0.5);
+    transform: translateY(-1px);
+}}
+
+/* ── Preview card (white paper-like surface) ─────────────────────── */
+[class*="st-key-rgf_rb_preview"] {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 40px 40px 48px !important;
+    min-height: 500px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}}
+.rgf-rb-report {{
+    max-width: 640px;
+    margin: 0 auto;
+}}
+.rgf-rb-report-header {{
+    text-align: center;
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--border);
+}}
+.rgf-rb-report-tag {{
+    font-size: 10px; font-weight: 600;
+    color: var(--accent); text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+}}
+.rgf-rb-report-title {{
+    font-size: 24px; font-weight: 700;
+    color: var(--text); letter-spacing: -0.02em;
+}}
+.rgf-rb-report-sub {{
+    font-size: 13px; color: var(--text-3);
+    margin-top: 8px;
+}}
+
+/* ── Section headings + KPI grid inside preview ─────────────────── */
+.rgf-rb-sec-title {{
+    font-size: 15px; font-weight: 700;
+    color: var(--text); margin: 24px 0 12px !important;
+}}
+.rgf-rb-sec-title:first-of-type {{ margin-top: 0 !important; }}
+
+.rgf-rb-kpi-grid {{
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 16px;
+}}
+.rgf-rb-kpi-cell {{
+    padding: 10px 14px;
+    background: var(--bg-soft); border-radius: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+}}
+.rgf-rb-kpi-label {{
+    font-size: 12px; color: var(--text-3);
+}}
+.rgf-rb-kpi-value {{
+    font-family: var(--mono);
+    font-weight: 600; font-size: 13px; color: var(--text);
+}}
+.rgf-rb-kpi-unit {{
+    font-family: var(--mono);
+    font-weight: 400; font-size: 11px; color: var(--text-3);
+    margin-left: 2px;
+}}
+
+/* Chart cards inside preview — subtle tinted bg frame */
+.rgf-rb-chart-card {{
+    background: var(--bg-soft); border-radius: 8px;
+    padding: 12px; margin-bottom: 16px;
+}}
+.rgf-rb-chart-card [class*="st-key-rgf_chart_panel_"] {{
+    background: transparent !important; border: none !important;
+}}
+
+/* Note / caption rows */
+.rgf-rb-note {{
+    font-size: 12px; color: var(--text-3);
+    padding: 12px; font-style: italic;
+    background: var(--bg-soft); border-radius: 6px;
+}}
+
+/* Tables inside preview */
+.rgf-rb-table {{
+    width: 100%; border-collapse: collapse;
+    font-size: 12px; margin-bottom: 16px;
+    font-family: var(--font);
+}}
+.rgf-rb-table thead tr {{ border-bottom: 2px solid var(--border); }}
+.rgf-rb-table th {{
+    padding: 8px 10px; text-align: left;
+    font-size: 10px; font-weight: 600;
+    color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.04em;
+}}
+.rgf-rb-table tbody tr {{
+    border-bottom: 1px solid var(--border-soft);
+}}
+.rgf-rb-table tbody tr:last-child {{ border-bottom: none; }}
+.rgf-rb-table td {{
+    padding: 8px 10px;
+    font-family: var(--mono); font-weight: 500;
+    color: var(--text); font-size: 12px;
+}}
+.rgf-rb-table-mono td {{ font-size: 11px; }}
+
+/* Badge in section panel header — shows "N of M included" */
+[class*="st-key-rb_panel_sections"] .rgf-cb-panel-hdr {{
+    display: flex; justify-content: space-between; align-items: center;
+}}
+
+/* ==============================================================
+   PRINT — Report Builder preview (save as PDF flow).
+
+   The @page size matches the on-screen preview container exactly:
+   720 px wide paper, auto-height so the content flows without
+   wasted A4 whitespace. Dark theme is preserved (same look as the
+   screen preview — the user's choice), zero margins so the
+   preview's own 40 px padding frames the content, and everything
+   except the preview card is display:none'd.
+
+   `size: 190mm auto` ≈ 720 px. Content height drives actual page
+   length — PDF viewers render each chunk as its own page.
+   ============================================================== */
+@media print {{
+    @page {{ size: 190mm auto; margin: 0; }}
+
+    /* Force dark-theme colours to ink so the PDF matches the preview. */
+    body.rgf-printing-report {{
+        background: var(--bg) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }}
+    body.rgf-printing-report * {{
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }}
+
+    /* Hide every bit of chrome: sidebar, top page header, sidebar
+       control panels, all the hidden __ click-through triggers. */
+    body.rgf-printing-report .rgf-sidebar,
+    body.rgf-printing-report .rgf-pghdr,
+    body.rgf-printing-report [class*="st-key-rb_panel_"],
+    body.rgf-printing-report [class*="st-key-__"] {{
+        display: none !important;
+    }}
+
+    /* Kill the column layout & all container paddings so the
+       preview card is flush against the @page edges. */
+    body.rgf-printing-report [data-testid="stMain"],
+    body.rgf-printing-report .main,
+    body.rgf-printing-report [data-testid="stMainBlockContainer"],
+    body.rgf-printing-report .block-container,
+    body.rgf-printing-report [data-testid="stAppViewContainer"],
+    body.rgf-printing-report [data-testid="stHorizontalBlock"] {{
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }}
+    /* Squash st.columns horizontal layout on print so the preview
+       doesn't sit in the 2nd of two inline columns. */
+    body.rgf-printing-report [data-testid="stHorizontalBlock"] {{
+        display: block !important;
+    }}
+    body.rgf-printing-report [data-testid="column"]:not(:has([class*="st-key-rgf_rb_preview"])) {{
+        display: none !important;
+    }}
+    body.rgf-printing-report [data-testid="column"]:has([class*="st-key-rgf_rb_preview"]) {{
+        width: 100% !important;
+    }}
+
+    /* Preview card: preserve its own 40 px padding (the design's
+       "white-paper" framing) — the @page is zero-margin so this
+       padding becomes the effective document margin. */
+    body.rgf-printing-report [class*="st-key-rgf_rb_preview"] {{
+        border: none !important;
+        box-shadow: none !important;
+        min-height: 0 !important;
+    }}
+
+    /* Keep cohesive blocks on the same virtual page. */
+    body.rgf-printing-report .rgf-rb-report-header,
+    body.rgf-printing-report .rgf-rb-sec-title {{
+        page-break-after: avoid;
+    }}
+    body.rgf-printing-report .rgf-rb-kpi-grid,
+    body.rgf-printing-report .rgf-rb-chart-card,
+    body.rgf-printing-report .rgf-rb-table {{
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }}
+
+    /* Canvas iframes — fit the preview content width (the card's
+       own max-width of 640 px handles horizontal framing). */
+    body.rgf-printing-report iframe {{
+        width: 100% !important;
+        max-width: 100% !important;
+        border: none !important;
+    }}
+}}
+
+/* ==============================================================
+   RAW DATA VIEW — toolbar (search + export) + filter form +
+   sticky-header sample table + pagination footer.
+   Matches components/views.jsx::RawDataView 1:1.
+   ============================================================== */
+/* ── Header row — title LEFT, search+filter+export inline RIGHT.
+   Matches views.jsx::RawDataView L515-524. ─────────────────────────── */
+[class*="st-key-rgf_rd_header"] {{
+    margin-bottom: 20px;
+}}
+[class*="st-key-rgf_rd_header"] [data-testid="stHorizontalBlock"] {{
+    align-items: flex-end !important;   /* title baseline aligns with controls */
+    gap: 8px !important;
+}}
+.rgf-pghdr-block {{ line-height: 1.2; }}
+.rgf-pghdr-block .rgf-pghdr-title {{ margin-bottom: 4px; }}
+.rgf-pghdr-block .rgf-pghdr-sub {{ margin: 0; }}
+
+/* Search pill — icon painted via ::before on the REAL Streamlit wrapper
+   (the stTextInput element) so positioning is stable regardless of
+   markdown auto-closing rules. Input's left padding reserves 34 px for
+   the icon + a comfortable gap.                                         */
+[class*="st-key-rgf_rd_header"] [data-testid="stTextInput"] {{
+    position: relative;
+}}
+[class*="st-key-rgf_rd_header"] [data-testid="stTextInput"]::before {{
+    content: "";
+    position: absolute;
+    left: 12px; top: 50%;
+    width: 14px; height: 14px;
+    transform: translateY(-50%);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='6.25'/><path d='M16 16l4.5 4.5'/></svg>");
+    background-repeat: no-repeat; background-size: contain;
+    pointer-events: none; z-index: 2;
+}}
+[class*="st-key-rgf_rd_header"] [data-baseweb="input"] {{
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 7px !important;
+    min-height: 36px !important;
+    padding: 0 !important;
+    transition: border-color 0.12s;
+}}
+[class*="st-key-rgf_rd_header"] [data-baseweb="input"]:focus-within {{
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 2px rgba(16,185,129,0.15) !important;
+}}
+[class*="st-key-rgf_rd_header"] [data-testid="stTextInput"] input {{
+    font-size: 13px !important;
+    color: var(--text) !important;
+    padding: 7px 10px 7px 34px !important;
+    background: transparent !important;
+    border: none !important;
+    font-family: var(--font) !important;
+}}
+[class*="st-key-rgf_rd_header"] [data-testid="stTextInput"] input:focus {{
+    outline: none !important; box-shadow: none !important;
+}}
+
+/* Inline HTML icon buttons row (filter + download) */
+.rgf-rd-icon-row {{
+    display: flex; gap: 6px; align-items: center;
+    justify-content: flex-end;
+}}
+.rgf-rd-icon-row .rgf-btn-icon {{
+    width: 36px; height: 36px;
+}}
+.rgf-rd-icon-row .rgf-btn-icon svg {{
+    width: 16px; height: 16px;
+}}
+
+/* Filter icon active state — used by the legacy .rgf-btn-icon too */
+.rgf-btn-icon.active {{
+    background: var(--accent-tint) !important;
+    color: var(--accent) !important;
+    border-color: var(--accent-border) !important;
+}}
+
+/* Filter form panel (hidden until filter icon toggles) */
+[class*="st-key-rgf_rd_filter"] {{
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px !important;
+    margin-bottom: 12px;
+}}
+.rgf-rd-filter-hdr {{
+    font-size: 10px; font-weight: 600; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 8px;
+}}
+[class*="st-key-rgf_rd_filter"] [data-baseweb="select"] > div,
+[class*="st-key-rgf_rd_filter"] [data-baseweb="input"] {{
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 7px !important;
+}}
+[class*="st-key-rgf_rd_filter"] [data-testid="stTextInput"] input,
+[class*="st-key-rgf_rd_filter"] [data-testid="stSelectbox"] {{
+    font-size: 12px !important;
+}}
+
+/* Data panel (wraps the table + pagination) */
+.rgf-rd-panel {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}}
+.rgf-rd-panel-hdr {{
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid var(--border-soft);
+}}
+.rgf-rd-panel-title {{
+    font-size: 13px; font-weight: 600; color: var(--text);
+}}
+.rgf-rd-panel-count {{
+    font-size: 11px; color: var(--text-3);
+    font-family: var(--mono);
+}}
+
+/* The table itself — sticky header, striped rows, mono numerics */
+.rgf-rd-table-scroll {{
+    overflow-x: auto; overflow-y: auto;
+    max-height: 600px;
+}}
+.rgf-rd-table {{
+    width: 100%; border-collapse: collapse;
+    font-family: var(--mono); font-size: 12px;
+}}
+.rgf-rd-table thead th {{
+    position: sticky; top: 0; z-index: 2;
+    background: var(--surface);
+    padding: 10px 12px; text-align: left;
+    font-family: var(--font);
+    font-size: 10px; font-weight: 600;
+    color: var(--text-3);
+    border-bottom: 2px solid var(--border);
+    text-transform: uppercase; letter-spacing: 0.03em;
+    white-space: nowrap;
+}}
+.rgf-rd-table tbody tr {{
+    border-bottom: 1px solid var(--border-soft);
+}}
+.rgf-rd-table tbody tr:last-child {{ border-bottom: none; }}
+.rgf-rd-table tbody tr.alt {{ background: var(--bg-row-alt); }}
+.rgf-rd-table td {{
+    padding: 7px 12px;
+    color: var(--text);
+    white-space: nowrap;
+}}
+.rgf-rd-table td.rgf-rd-rownum,
+.rgf-rd-table th.rgf-rd-rownum {{
+    color: var(--text-3);
+    width: 48px;
+    font-family: var(--mono);
+}}
+/* Load column gets the brand accent — design line 544 */
+.rgf-rd-table td.rgf-rd-load {{
+    color: var(--accent) !important;
+    font-weight: 500;
+}}
+
+/* Pagination footer */
+.rgf-rd-pagination {{
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 18px; margin-top: 4px;
+    border-top: 1px solid var(--border);
+}}
+.rgf-rd-pagination-info {{
+    font-size: 12px; color: var(--text-3);
+}}
+.rgf-rd-pagination-btns {{
+    display: flex; gap: 4px; align-items: center;
+}}
+.rgf-rd-pagination-btns .rgf-btn-sm {{
+    min-width: 32px; padding: 4px 8px;
+    justify-content: center;
+}}
+.rgf-rd-pagination-btns .rgf-btn-sm[disabled] {{
+    opacity: 0.4; cursor: not-allowed;
+}}
+.rgf-rd-ellipsis {{
+    padding: 0 4px; color: var(--text-3);
+    font-size: 12px; user-select: none;
+}}
+
+/* ==============================================================
+   SETTINGS VIEW — 1:1 port of components/view-settings.jsx.
+   Panels are real st.container(key="rgf_set_pnl_*") elements, so
+   widget DOM is actually INSIDE the card chrome.
+   ============================================================== */
+
+/* ── Panel chrome — 1:1 with ChartPanel in ui.jsx ─────────────────────
+   Outer: white/surface bg, 10px radius, 1px border, padding 0 on the
+   container. Header gets 14/18/10 padding and a full-width border-bottom.
+   Body padding is injected via the horizontal container padding + first
+   / last child margins so the widget rhythm sits at 12px. */
+[class*="st-key-rgf_set_pnl_"] {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0 18px 16px;
+    overflow: hidden;
+}}
+[class*="st-key-rgf_set_pnl_"] .rgf-settings-panel-hdr {{
+    font-size: 13px; font-weight: 600; color: var(--text);
+    padding: 14px 18px 10px;
+    margin: 0 -18px 12px;
+    border-bottom: 1px solid var(--border-soft);
+}}
+
+/* Uppercase micro-label above each field */
+.rgf-settings-label {{
+    font-size: 10px; font-weight: 600; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin: 0 0 4px;
+    font-family: var(--font);
+    display: block;
+}}
+.rgf-settings-hint {{
+    font-size: 12px; color: var(--text-2); line-height: 1.6;
+    padding: 0 0 4px;
+}}
+.rgf-settings-hint-sm {{
+    font-size: 10px; color: var(--text-3); margin-top: 3px;
+}}
+
+/* Tighten Streamlit's default vertical block gap inside each panel so
+   the 12-px rhythm matches the design exactly (default is 1rem ≈ 16px). */
+[class*="st-key-rgf_set_pnl_"] [data-testid="stVerticalBlock"] {{
+    gap: 0 !important;
+}}
+[class*="st-key-rgf_set_pnl_"] > div > [data-testid="stElementContainer"] {{
+    margin-bottom: 12px;
+}}
+[class*="st-key-rgf_set_pnl_"] > div > [data-testid="stElementContainer"]:last-child {{
+    margin-bottom: 0;
+}}
+/* Label + input pair: no gap between them */
+[class*="st-key-rgf_set_pnl_"] [data-testid="stElementContainer"]:has(.rgf-settings-label) {{
+    margin-bottom: 0;
+}}
+
+/* ── INPUT CHROME — matches inputStyle in view-settings.jsx ─────────────
+   padding 9px 12px, font 13px, border 1px solid --border, radius 7px. */
+[class*="st-key-rgf_set_pnl_"] [data-baseweb="input"],
+[class*="st-key-rgf_set_pnl_"] [data-baseweb="select"] > div:first-child {{
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 7px !important;
+    min-height: 38px !important;
+    transition: border-color 0.12s, box-shadow 0.12s !important;
+}}
+[class*="st-key-rgf_set_pnl_"] [data-baseweb="input"]:focus-within,
+[class*="st-key-rgf_set_pnl_"] [data-baseweb="select"]:focus-within > div:first-child {{
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 2px rgba(16,185,129,0.18) !important;
+}}
+[class*="st-key-rgf_set_pnl_"] [data-testid="stTextInput"] input,
+[class*="st-key-rgf_set_pnl_"] [data-testid="stNumberInput"] input,
+[class*="st-key-rgf_set_pnl_"] [data-testid="stDateInput"] input {{
+    font-size: 13px !important;
+    color: var(--text) !important;
+    padding: 9px 12px !important;
+    background: transparent !important;
+    border: none !important;
+    font-family: var(--font) !important;
+}}
+[class*="st-key-rgf_set_pnl_"] [data-testid="stTextInput"] input:focus,
+[class*="st-key-rgf_set_pnl_"] [data-testid="stNumberInput"] input:focus,
+[class*="st-key-rgf_set_pnl_"] [data-testid="stDateInput"] input:focus {{
+    outline: none !important; box-shadow: none !important;
+}}
+
+/* Selectbox value text + dropdown arrow colouring */
+[class*="st-key-rgf_set_pnl_"] [data-baseweb="select"] * {{
+    color: var(--text) !important;
+    font-family: var(--font) !important;
+    font-size: 13px !important;
+}}
+
+/* Mono variant — flips text + number inputs to JetBrains Mono 12px.
+   The marker div wraps the widget container so we can target siblings. */
+[class*="st-key-rgf_set_pnl_"] .rgf-mono-field ~ div [data-testid="stTextInput"] input,
+[class*="st-key-rgf_set_pnl_"] .rgf-mono-field ~ div [data-testid="stNumberInput"] input,
+[class*="st-key-rgf_set_pnl_"] .rgf-mono-field + div input,
+[class*="st-key-rgf_set_pnl_"] .rgf-mono-field + div [data-testid="stTextInput"] input,
+[class*="st-key-rgf_set_pnl_"] .rgf-mono-field + div [data-testid="stNumberInput"] input {{
+    font-family: var(--mono) !important;
+    font-size: 12px !important;
+    letter-spacing: 0.01em !important;
+}}
+
+/* Number-input +/- steppers — design uses a plain number-type input
+   with no spinner, so hide Streamlit's stepper cluster completely. */
+[class*="st-key-rgf_set_pnl_"] [data-testid="stNumberInputStepDown"],
+[class*="st-key-rgf_set_pnl_"] [data-testid="stNumberInputStepUp"],
+[class*="st-key-rgf_set_pnl_"] [data-testid="stNumberInputContainer"] > div:last-child {{
+    display: none !important;
+}}
+[class*="st-key-rgf_set_pnl_"] [data-testid="stNumberInputContainer"] {{
+    border: none !important; background: transparent !important;
+}}
+
+/* Date input — match plain text input chrome. Hide the built-in
+   calendar-icon slot (baseweb renders a decorative icon on the right
+   that the design doesn't have). */
+[class*="st-key-rgf_set_pnl_"] [data-testid="stDateInput"] [data-baseweb="input"] {{
+    padding-right: 8px !important;
+}}
+[class*="st-key-rgf_set_pnl_"] [data-testid="stDateInput"] svg {{
+    color: var(--text-3);
+    opacity: 0.7;
+}}
+
+/* Checkbox rows (Default Sections) — compact 12-px list with
+   emerald-green accent when checked. Matches the design's native
+   <input type="checkbox" accentColor="#10b981"> list. */
+.rgf-settings-checks {{
+    display: flex; flex-direction: column; gap: 4px;
+    margin-top: 2px;
+}}
+[class*="st-key-rgf_set_pnl_"] [data-testid="stCheckbox"] {{
+    padding: 0 !important;
+}}
+[class*="st-key-rgf_set_pnl_"] [data-testid="stCheckbox"] label {{
+    font-size: 12px !important;
+    color: var(--text-2) !important;
+    gap: 8px !important;
+    padding: 3px 0 !important;
+    cursor: pointer;
+}}
+[class*="st-key-rgf_set_pnl_"] [data-testid="stCheckbox"] label span[data-baseweb="checkbox"] > div:first-child,
+[class*="st-key-rgf_set_pnl_"] [data-testid="stCheckbox"] [role="checkbox"] {{
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 4px !important;
+    width: 16px !important; height: 16px !important;
+}}
+[class*="st-key-rgf_set_pnl_"] [data-testid="stCheckbox"] label span[data-baseweb="checkbox"][aria-checked="true"] > div:first-child,
+[class*="st-key-rgf_set_pnl_"] [data-testid="stCheckbox"] [role="checkbox"][aria-checked="true"] {{
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+}}
+[class*="st-key-rgf_set_pnl_"] [data-testid="stCheckbox"] label span[data-baseweb="checkbox"][aria-checked="true"] svg {{
+    fill: #fff !important;
+}}
+
+/* Warning banner (calibration tab) */
+.rgf-settings-warn {{
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px;
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-border);
+    border-radius: 10px;
+    margin-bottom: 16px;
+}}
+.rgf-settings-warn-icon {{
+    color: var(--warn-icon);
+    flex-shrink: 0;
+    display: flex; align-items: center;
+}}
+.rgf-settings-warn-text {{
+    font-size: 13px; color: var(--warn-text); line-height: 1.5;
+}}
+
+/* GCP connection-status pill */
+.rgf-settings-status {{
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: rgba(16,185,129,0.10);
+    border-radius: 8px;
+    margin-top: 4px;
+}}
+.rgf-settings-status-dot {{
+    width: 8px; height: 8px; border-radius: 4px;
+    background: var(--accent);
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.18);
+}}
+.rgf-settings-status-text {{
+    font-size: 12px; color: var(--accent); font-weight: 500;
+}}
+
+/* File uploader inside GCP panel — compact dashed drop zone */
+[class*="st-key-settings_gcp_key_file"] [data-testid="stFileUploader"] section {{
+    background: var(--bg-soft) !important;
+    border: 1px dashed var(--border) !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    min-height: 0 !important;
+}}
+
+/* Footer: Reset + Save (gradient) ─────────────────────────────────────
+   Matches the design's "padding: 9px 24px, fontSize: 13, borderRadius: 8"
+   gradient button plus the secondary SmallBtn for Reset. */
+.rgf-settings-footer {{
+    display: flex; justify-content: flex-end;
+    gap: 8px;
+    padding-top: 16px;
+    margin-top: 8px;
+}}
+.rgf-btn-save {{
+    padding: 9px 24px;
+    font-size: 13px; font-weight: 600;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff; border: none; border-radius: 8px;
+    cursor: pointer; font-family: var(--font);
+    box-shadow: 0 1px 4px rgba(16,185,129,0.30);
+    transition: box-shadow 0.15s, transform 0.15s;
+}}
+.rgf-btn-save:hover {{
+    box-shadow: 0 2px 10px rgba(16,185,129,0.5);
+    transform: translateY(-1px);
+}}
+
+
+/* Raw Data: ensure the icon row aligns vertically with the search pill.
+   The st.columns block puts its children at the TOP by default; we
+   force the 3rd column (actions) to center its 36-px buttons on the
+   same baseline as the 36-px search pill. */
+[class*="st-key-rgf_rd_header"] [data-testid="stHorizontalBlock"] {{
+    align-items: center !important;
+}}
+[class*="st-key-rgf_rd_header"] [data-testid="stVerticalBlock"]:has(.rgf-rd-icon-row) {{
+    justify-content: center !important;
+    display: flex !important;
+    height: 100%;
+}}
+.rgf-rd-icon-row {{
+    display: flex !important;
+    gap: 6px; align-items: center;
+    justify-content: flex-end;
+}}
+
+/* ============================================================
+   SHM-specific (app2) — sensor pills, type bars, stat rows,
+   correlation matrix. All other classes inherit from the
+   shared RPLT stylesheet copied in earlier.
+   ============================================================ */
+
+/* Sensor-type chips on the Data Setup row */
+.rgf-shm-sensor-chips {{
+    display: flex; flex-wrap: wrap; gap: 6px;
+    align-items: center;
+    height: 38px;
+    padding: 0 4px;
+}}
+.rgf-shm-sensor-pill {{
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    background: var(--bg-soft);
+    border-radius: 999px;
+    font-size: 11px; color: var(--text-2);
+    border-left: 3px solid var(--sensor-color, var(--accent));
+    font-family: var(--font);
+}}
+.rgf-shm-sensor-pill b {{ color: var(--text); font-weight: 600; }}
+
+/* Type bars between Sensor Browser sections */
+.rgf-shm-typebar {{
+    display: flex; align-items: center; gap: 10px;
+    margin: 16px 0 6px;
+    font-family: var(--font); font-size: 13px; color: var(--text);
+}}
+.rgf-shm-typedot {{
+    width: 10px; height: 10px; border-radius: 50%;
+}}
+.rgf-shm-typename {{ font-weight: 600; }}
+.rgf-shm-typecount {{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-3);
+    background: var(--bg-soft);
+    border-radius: 4px;
+    padding: 2px 6px;
+}}
+
+/* Per-sensor stat row under a chart panel */
+.rgf-shm-sensor-stats {{
+    display: flex; flex-wrap: wrap; gap: 12px 18px;
+    padding: 8px 14px 14px;
+    margin-top: -8px;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-3);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    margin-bottom: 16px;
+}}
+.rgf-shm-sensor-stats b {{
+    color: var(--text); font-weight: 600;
+    margin-right: 4px;
+}}
+
+/* Overview stats column */
+.rgf-shm-stats {{
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 6px 14px 14px;
+}}
+.rgf-shm-stat-row {{
+    display: grid;
+    grid-template-columns: 12px 1fr auto auto auto;
+    gap: 8px;
+    align-items: center;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-3);
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border-soft);
+}}
+.rgf-shm-stat-row:last-child {{ border-bottom: none; }}
+.rgf-shm-stat-color {{
+    width: 10px; height: 10px; border-radius: 50%;
+}}
+.rgf-shm-stat-name {{
+    color: var(--text); font-family: var(--font);
+    font-size: 12px;
+    text-overflow: ellipsis; overflow: hidden; white-space: nowrap;
+}}
+.rgf-shm-stat-val,
+.rgf-shm-stat-drift,
+.rgf-shm-stat-trend {{
+    white-space: nowrap;
+    color: var(--text-3);
+}}
+
+/* Misc meta strip beneath charts */
+.rgf-shm-meta {{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-3);
+    padding: 6px 0 14px;
+}}
+.rgf-shm-meta b {{ color: var(--text); font-weight: 600; }}
+
+/* Correlation matrix */
+.rgf-shm-corr-wrap {{
+    overflow: auto;
+    max-height: 540px;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+}}
+.rgf-shm-corr {{
+    border-collapse: separate; border-spacing: 0;
+    font-family: var(--mono); font-size: 11px;
+    width: 100%;
+}}
+.rgf-shm-corr th,
+.rgf-shm-corr td {{
+    padding: 6px 10px;
+    text-align: center;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border-soft);
+}}
+.rgf-shm-corr-th {{
+    color: var(--text-3);
+    font-weight: 600;
+    background: var(--bg-soft);
+    position: sticky; top: 0; z-index: 2;
+    font-family: var(--font); font-size: 11px;
+}}
+.rgf-shm-corr-th-row {{
+    text-align: right;
+    position: sticky; left: 0; z-index: 1;
+    background: var(--bg-soft);
+}}
+.rgf-shm-corr-cell {{
+    color: var(--text);
+    transition: filter 0.12s;
+}}
+.rgf-shm-corr-cell:hover {{ filter: brightness(1.2); }}
+
+/* r-value display in the inspector pane */
+.rgf-shm-corr-r {{
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--bg-soft);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    text-align: center;
+}}
+.rgf-shm-corr-r-label {{
+    display: block;
+    font-size: 10px; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 4px;
+    font-family: var(--font);
+}}
+.rgf-shm-corr-r-value {{
+    font-family: var(--mono); font-size: 20px; font-weight: 600;
+    color: var(--accent);
+}}
+
+/* ============================================================
+   Engineer-grade layout primitives
+   --------------------------------
+   Ported from the Oriel institutional-finance demo, retuned to
+   the SHM teal/dark theme. These classes define the building
+   blocks (section heading, KPI strip, right-rail print panel,
+   small stat chip) that views compose into a clean, dense,
+   desk-style page layout.
+   ============================================================ */
+
+/* ── Section heading with teal left rail ───────────────────────────────── */
+.rgf-shdr {{
+    position: relative;
+    text-transform: uppercase;
+    font-family: var(--font);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--text-2);
+    padding: 8px 0 8px 14px;
+    margin: 22px 0 12px;
+    border-bottom: 1px solid var(--border);
+}}
+.rgf-shdr::before {{
+    content: "";
+    position: absolute;
+    left: 0; top: 6px; bottom: 6px;
+    width: 3px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, {ACCENT} 0%, {ACCENT_SOFT} 50%, transparent 100%);
+    box-shadow: 0 0 8px rgba(16,185,129,0.32);
+}}
+.rgf-shdr-major {{
+    font-size: 13px;
+    color: var(--text);
+    padding-top: 10px; padding-bottom: 10px;
+    margin-top: 8px;
+}}
+.rgf-shdr-major::before {{
+    width: 4px;
+    box-shadow: 0 0 14px rgba(16,185,129,0.45);
+}}
+
+/* ── KPI strip (institutional metric rail) ─────────────────────────────── */
+.rgf-kpi-strip-wrap {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+}}
+.rgf-kpi-ribbon {{
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 10px;
+    color: var(--text-3);
+    font-family: var(--font);
+    padding: 8px 18px;
+    background: linear-gradient(90deg, {NAVY_LIGHT} 0%, var(--bg-soft) 100%);
+    border-bottom: 1px solid var(--border-soft);
+}}
+.rgf-kpi-strip {{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    align-items: stretch;
+}}
+.rgf-kpi-cell {{
+    padding: 14px 18px 14px;
+    border-left: 1px solid var(--border-soft);
+    display: flex; flex-direction: column; gap: 3px;
+    min-height: 78px;
+}}
+.rgf-kpi-cell:first-child {{ border-left: none; }}
+.rgf-kpi-cell-micro {{
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 9.5px;
+    color: var(--text-3);
+    font-family: var(--font);
+}}
+.rgf-kpi-cell .rgf-kpi-value {{
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.05;
+    margin-top: 3px;
+    display: inline-flex; align-items: baseline; gap: 5px;
+}}
+.rgf-kpi-cell .rgf-kpi-value-lead {{
+    font-size: 24px;
+    color: var(--accent);
+}}
+.rgf-kpi-cell .rgf-kpi-value-pos {{ color: {DELTA_UP_TEXT}; }}
+.rgf-kpi-cell .rgf-kpi-value-neg {{ color: {DELTA_DOWN_TEXT}; }}
+.rgf-kpi-cell .rgf-kpi-value-warn {{ color: {WARN_TEXT}; }}
+.rgf-kpi-cell-unit {{
+    font-size: 11px;
+    color: var(--text-3);
+    font-weight: 500;
+}}
+.rgf-kpi-cell-sub {{
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--text-3);
+    margin-top: 2px;
+    letter-spacing: -0.01em;
+}}
+
+/* ── Print panel — right-rail K/V summary with optional hero band ─────── */
+.rgf-ip-wrap {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+}}
+.rgf-ip-hdr {{
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px;
+    background: linear-gradient(90deg, {NAVY_LIGHT} 0%, var(--bg-soft) 100%);
+    border-bottom: 1px solid var(--border-soft);
+}}
+.rgf-ip-title {{
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 10.5px;
+    color: var(--text-2);
+    font-weight: 600;
+    font-family: var(--font);
+}}
+.rgf-ip-status {{
+    font-size: 10px; font-family: var(--mono);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+    background: var(--accent-tint);
+    padding: 2px 8px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+}}
+.rgf-ip-hl {{
+    padding: 10px 14px 12px;
+    background: linear-gradient(180deg, var(--accent-tint) 0%, transparent 100%);
+    border-bottom: 1px solid var(--border-soft);
+}}
+.rgf-ip-hl-lbl {{
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 9.5px;
+    color: var(--text-3);
+}}
+.rgf-ip-hl-val {{
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 4px;
+    letter-spacing: -0.01em;
+}}
+.rgf-ip-body {{
+    padding: 4px 14px 12px;
+}}
+.rgf-ip-row {{
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border-soft);
+    font-size: 11.5px;
+}}
+.rgf-ip-row:last-child {{ border-bottom: none; }}
+.rgf-ip-key {{
+    color: var(--text-3);
+    font-family: var(--font);
+    text-transform: none;
+}}
+.rgf-ip-val {{
+    color: var(--text);
+    font-family: var(--mono);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+}}
+
+/* ── Stat mini · single-strip layout ───────────────────────────────────
+   Was a 7-card floating grid that wrapped awkwardly under each sensor
+   panel; now a single bordered strip with equal-flex cells (matches
+   the dataset KPI strip pattern). Cells separated by hairline dividers,
+   first cell carries the accent left rail.                            */
+.rgf-stat-mini-grid {{
+    display: flex;
+    align-items: stretch;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 1px 3px rgba(15,23,51,0.04);
+    margin: 4px 0 16px;
+    overflow: hidden;
+    flex-wrap: wrap;
+}}
+.rgf-stat-mini {{
+    flex: 1 1 110px;
+    min-width: 0;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    border-left: 1px solid var(--border-soft);
+    border-radius: 0;
+    display: flex; flex-direction: column; gap: 4px;
+    transition: background 0.12s;
+}}
+.rgf-stat-mini:first-child {{
+    border-left: 3px solid var(--accent);
+}}
+.rgf-stat-mini:hover {{
+    background: var(--bg-soft);
+    box-shadow: none;
+    border-color: var(--border-soft);
+}}
+.rgf-stat-mini-lbl {{
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 9.5px;
+    font-weight: 600;
+    color: var(--text-3);
+    font-family: var(--font);
+}}
+.rgf-stat-mini-val {{
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    display: inline-flex; align-items: baseline; gap: 5px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}}
+.rgf-stat-mini-unit {{
+    font-size: 11px;
+    color: var(--text-3);
+    font-weight: 500;
+    flex-shrink: 0;
+}}
+
+/* ── Google Sheets source helpers ──────────────────────────────────────── */
+.rgf-gsheet-help {{
+    font-size: 11.5px;
+    color: var(--text-3);
+    margin-bottom: 10px;
+    line-height: 1.55;
+}}
+.rgf-gsheet-help strong {{ color: var(--text-2); font-weight: 600; }}
+.rgf-gsheet-help em {{
+    color: var(--text-2);
+    font-style: normal; font-weight: 500;
+    background: var(--bg-soft);
+    padding: 1px 6px; border-radius: 4px;
+    border: 1px solid var(--border-soft);
+}}
+.rgf-gsheet-parsed {{
+    display: inline-flex; gap: 12px; align-items: center;
+    padding-top: 8px;
+    font-size: 11px; color: var(--text-3);
+    font-family: var(--font);
+}}
+.rgf-gsheet-parsed code {{
+    font-family: var(--mono);
+    background: var(--bg-soft);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--text-2);
+    border: 1px solid var(--border-soft);
+}}
+
+/* ── Time-window filter bar ────────────────────────────────────────────
+   Sticky strip beneath the page header, scopes every chart + KPI in
+   the view to the active preset. Engineers reach for this constantly
+   — keep it dense, mono-numeric, clearly indicating the active range
+   and how many samples remain inside it.                              */
+.rgf-tw-bar {{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 10px 14px;
+    margin: 4px 0 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 1px 3px rgba(15,23,51,0.04);
+}}
+.rgf-tw-label {{
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-3);
+    font-family: var(--font);
+}}
+.rgf-tw-pills {{
+    display: inline-flex;
+    background: var(--bg-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: 999px;
+    padding: 2px;
+    gap: 0;
+}}
+.rgf-tw-pill {{
+    background: transparent;
+    border: none;
+    padding: 5px 12px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--text-2);
+    cursor: pointer;
+    border-radius: 999px;
+    font-family: var(--font);
+    transition: background 0.12s, color 0.12s;
+}}
+.rgf-tw-pill:hover {{
+    background: var(--surface);
+    color: var(--text);
+}}
+.rgf-tw-pill.active {{
+    background: var(--surface);
+    color: var(--accent-deep);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(15,23,51,0.06),
+                0 0 0 1px var(--accent-border) inset;
+}}
+.rgf-tw-range {{
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-3);
+    flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}}
+.rgf-tw-range code {{
+    color: var(--text);
+    background: var(--bg-soft);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border-soft);
+}}
+.rgf-tw-count {{
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-2);
+    white-space: nowrap;
+}}
+.rgf-tw-count .rgf-tw-pct {{
+    color: var(--text-3);
+}}
+
+/* ── Data Quality · coverage Gantt ─────────────────────────────────────
+   Per-sensor horizontal bar showing covered (accent green) vs gaps
+   (red overlays). Designed to surface outages at a glance.          */
+.rgf-dq-axis {{
+    display: flex; align-items: center;
+    margin: 8px 0 6px;
+    font-size: 9.5px; color: var(--text-3);
+    font-family: var(--mono);
+}}
+.rgf-dq-axis-spacer {{ width: 124px; flex-shrink: 0; }}
+.rgf-dq-axis-row {{ position: relative; flex: 1; height: 14px; }}
+.rgf-dq-tick {{
+    position: absolute; transform: translateX(-50%);
+    white-space: nowrap;
+}}
+.rgf-dq-rows {{
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 4px 0 8px;
+}}
+.rgf-dq-row {{
+    display: flex; align-items: center; gap: 10px;
+}}
+.rgf-dq-name {{
+    width: 116px; flex-shrink: 0;
+    padding: 4px 0 4px 8px;
+    border-left: 3px solid var(--accent);
+    font-family: var(--font); font-size: 12px; font-weight: 500;
+    color: var(--text);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}}
+.rgf-dq-bar {{
+    position: relative; flex: 1; height: 18px;
+    border-radius: 4px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border-soft);
+    overflow: hidden;
+}}
+.rgf-dq-fill {{
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, {ACCENT_TINT} 0%, {ACCENT_LIGHT} 100%);
+    border-right: 1px solid var(--accent-border);
+}}
+.rgf-dq-gap {{
+    position: absolute; top: 0; bottom: 0;
+    background: linear-gradient(180deg, {DELTA_DOWN_BG} 0%, rgba(220, 38, 38, 0.42) 100%);
+    border-left: 1px solid {DELTA_DOWN_TEXT};
+    border-right: 1px solid {DELTA_DOWN_TEXT};
+    cursor: help;
+}}
+.rgf-dq-cov {{
+    width: 56px; text-align: right; flex-shrink: 0;
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}}
+.rgf-dq-cov-good {{ color: {DELTA_UP_TEXT}; }}
+.rgf-dq-cov-warn {{ color: {WARN_TEXT}; }}
+.rgf-dq-cov-bad  {{ color: {DELTA_DOWN_TEXT}; }}
+.rgf-dq-eps {{
+    width: 50px; text-align: right; flex-shrink: 0;
+    font-family: var(--mono); font-size: 10.5px;
+    color: var(--text-3);
+}}
+.rgf-dq-legend {{
+    display: flex; gap: 18px;
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: var(--bg-soft);
+    border-radius: var(--radius-sm);
+    font-size: 10.5px; color: var(--text-3);
+    font-family: var(--font);
+}}
+.rgf-dq-legend span {{ display: inline-flex; align-items: center; gap: 6px; }}
+.rgf-dq-key {{
+    width: 18px; height: 10px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+}}
+.rgf-dq-key-fill {{ background: {ACCENT_LIGHT}; border-color: var(--accent-border); }}
+.rgf-dq-key-gap  {{ background: {DELTA_DOWN_BG}; border-color: {DELTA_DOWN_TEXT}; }}

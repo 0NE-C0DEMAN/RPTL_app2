@@ -1,0 +1,86 @@
+# Cloud Build pipeline — builds the Docker image, pushes to Artifact
+# Registry, and deploys a new revision to Cloud Run.
+#
+# Wire this to a Cloud Build trigger on your repo (e.g. on-push to
+# main) and every commit ships a fresh revision. Configurable via
+# substitution variables below — override per-trigger in the Cloud
+# Console or via `gcloud builds submit --substitutions=...`.
+#
+# Required one-time setup (see DEPLOYMENT.md):
+#   1. Enable: Cloud Build, Cloud Run, Artifact Registry APIs
+#   2. Grant the Cloud Build service account:
+#        roles/run.admin
+#        roles/iam.serviceAccountUser
+#        roles/artifactregistry.writer
+#   3. Create an Artifact Registry repo named $_REPO in region $_REGION
+
+substitutions:
+  _REGION:  us-central1                 # GCP region for both AR + Cloud Run
+  _REPO:    shm-dashboard              # Artifact Registry repo name
+  _SERVICE: shm-dashboard              # Cloud Run service name
+  _MEMORY:  2Gi                         # Per-instance memory
+  _CPU:     "2"                         # Per-instance vCPU count
+  _TIMEOUT: "900"                       # Request timeout (s) — Streamlit
+                                        # uses WebSockets, so bump high.
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+# ── Short-hand for the full image URI ───────────────────────────────────
+# projects/$PROJECT_ID/locations/$_REGION/repositories/$_REPO/packages/$_SERVICE
+# Using the simpler artifactregistry.pkg.dev URL that docker accepts
+# directly.
+
+steps:
+  # 1. Build the image, tagging with both the commit SHA and "latest"
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --tag=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA
+      - --tag=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:latest
+      - --cache-from=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:latest
+      - .
+
+  # 2. Push both tags to Artifact Registry
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - --all-tags
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}
+
+  # 3. Deploy a new Cloud Run revision using the SHA-tagged image
+  #    (pinning lets you roll back to any prior commit by image tag)
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE}
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA
+      - --region=${_REGION}
+      - --platform=managed
+      - --allow-unauthenticated
+      - --memory=${_MEMORY}
+      - --cpu=${_CPU}
+      - --timeout=${_TIMEOUT}
+      # WebSocket sessions are long-lived — prevent Cloud Run from
+      # spinning up extra instances on a single user's burst and
+      # accidentally routing their WS to a fresh instance mid-session.
+      - --session-affinity
+      # Streamlit serves one WebSocket per tab; 80 concurrent tabs
+      # per instance is plenty for an internal app. Raise if needed.
+      - --concurrency=80
+      # Scale to zero — no cost when nobody's using it. Bump --min-
+      # instances=1 if you want sub-second cold-start for the demo.
+      - --min-instances=0
+      - --max-instances=10
+
+# Final image is visible in the Artifact Registry UI
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:latest
+
+timeout: 1200s
