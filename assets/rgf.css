@@ -99,27 +99,26 @@ html, body {{
 [class*="st-"], [class*="st-"] * {{
     font-family: var(--font);
 }}
-/* Material Icons — Streamlit's expander chevrons / sidebar arrows /
-   action icons all use Material Icons font with the icon NAME as the
-   text node (e.g. "keyboard_arrow_right" → ▶). Our blanket DM Sans
-   rule above clobbers that, leaving the literal name visible as text.
-   Restore the icon font for every Material-Icons surface. */
+/* Material Icons — Streamlit renders the icon NAME as a text node
+   ("keyboard_arrow_right") and relies on the Material Symbols font's
+   ligature feature to substitute glyphs. The font import is fragile
+   (CSP / network / font-display delays) and when it fails the literal
+   name overlays the expander label. Cleanest, deterministic fix: hide
+   every Material-Icons surface entirely. The expander, sidebar, etc.
+   still function — the chevron is decorative. */
 [data-testid="stIconMaterial"],
-[data-testid="stIconMaterial"] *,
 .material-icons, .material-icons-outlined,
 .material-symbols-outlined, .material-symbols-rounded,
-i.material-icons {{
-    font-family: 'Material Symbols Outlined', 'Material Icons',
-                 'Material Icons Outlined' !important;
-    font-weight: normal !important;
-    font-style: normal !important;
-    letter-spacing: normal !important;
-    text-transform: none !important;
-    white-space: nowrap !important;
-    word-wrap: normal !important;
-    font-feature-settings: 'liga' !important;
-    -webkit-font-feature-settings: 'liga' !important;
-    -webkit-font-smoothing: antialiased !important;
+i.material-icons,
+[data-testid="stExpander"] svg[class*="emotion"],
+summary [data-testid="stIconMaterial"] {{
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
 }}
 /* Explicit mono reclaim — any element or descendant of a mono-marked wrapper. */
 .rgf-kpi-value, .rgf-kpi-value *,
@@ -887,10 +886,30 @@ input:focus, select:focus,
 }}
 
 /* Dropdown menus — re-themed for the light surface palette.
-   BaseWeb's popover stacks 3-4 nested divs each with their own
-   background (legacy dark Streamlit defaults). We force every
-   layer to the white surface, with hairline border + soft shadow,
-   and tint hover/selected rows in our accent. */
+   Aggressively force every nested layer to white. BaseWeb popovers
+   stack many divs with their own dark backgrounds inherited from the
+   legacy dark Streamlit defaults; targeting every descendant with
+   `background: var(--surface) !important` neutralises them all. */
+[data-baseweb="popover"],
+[data-baseweb="popover"] *,
+[data-baseweb="menu"],
+[data-baseweb="menu"] *,
+[data-baseweb="select-dropdown"],
+[data-baseweb="select-dropdown"] * {{
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+}}
+[data-baseweb="popover"] [role="option"]:hover,
+[data-baseweb="popover"] [role="option"]:hover * {{
+    background-color: var(--bg-soft) !important;
+}}
+[data-baseweb="popover"] [aria-selected="true"],
+[data-baseweb="popover"] [aria-selected="true"] *,
+[data-baseweb="popover"] [role="option"][aria-selected="true"]:hover,
+[data-baseweb="popover"] [role="option"][aria-selected="true"]:hover * {{
+    background-color: var(--accent-tint) !important;
+    color: var(--accent-deep) !important;
+}}
 [data-baseweb="popover"],
 [data-baseweb="popover"] > div,
 [data-baseweb="popover"] [role="listbox"],
