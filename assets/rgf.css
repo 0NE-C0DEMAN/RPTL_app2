@@ -862,6 +862,33 @@ body:has(.rgf-sidebar-collapsed) .main {{
     font-size: 12px !important;
     font-family: var(--mono) !important;
 }}
+/* Force the SELECTED-value text inside a selectbox to dark slate.
+   Streamlit/BaseWeb renders the value via several nested divs +
+   the input element's value; without explicit overrides each one
+   inherits the muted placeholder colour and looks faded. */
+body .stSelectbox [data-baseweb="select"] *,
+body .stMultiSelect [data-baseweb="select"] > div > div,
+body .stSelectbox input,
+body .stMultiSelect input,
+body [data-baseweb="select"] [role="combobox"],
+body [data-baseweb="select"] [data-id] {{
+    color: var(--text) !important;
+    -webkit-text-fill-color: var(--text) !important;
+    opacity: 1 !important;
+}}
+/* Native input value text in date / time / number / text inputs */
+body input,
+body textarea {{
+    color: var(--text) !important;
+    -webkit-text-fill-color: var(--text) !important;
+    opacity: 1 !important;
+}}
+body input::placeholder,
+body textarea::placeholder {{
+    color: var(--text-3) !important;
+    -webkit-text-fill-color: var(--text-3) !important;
+    opacity: 0.85 !important;
+}}
 .stTextInput input, .stNumberInput input {{
     height: 34px !important; padding: 0 10px !important;
     border: 1px solid var(--border) !important;
@@ -890,13 +917,21 @@ input:focus, select:focus,
    stack many divs with their own dark backgrounds inherited from the
    legacy dark Streamlit defaults; targeting every descendant with
    `background: var(--surface) !important` neutralises them all. */
-[data-baseweb="popover"],
-[data-baseweb="popover"] *,
-[data-baseweb="menu"],
-[data-baseweb="menu"] *,
-[data-baseweb="select-dropdown"],
-[data-baseweb="select-dropdown"] * {{
+body [data-baseweb="popover"],
+body [data-baseweb="popover"] *,
+body [data-baseweb="menu"],
+body [data-baseweb="menu"] *,
+body [data-baseweb="select-dropdown"],
+body [data-baseweb="select-dropdown"] *,
+body [data-baseweb="select"] [role="listbox"],
+body [data-baseweb="select"] [role="listbox"] *,
+body ul[role="listbox"],
+body ul[role="listbox"] *,
+body [role="listbox"][data-baseweb="menu"] li,
+body [role="listbox"][data-baseweb="menu"] li * {{
+    background: var(--surface) !important;
     background-color: var(--surface) !important;
+    background-image: none !important;
     color: var(--text) !important;
 }}
 [data-baseweb="popover"] [role="option"]:hover,
